@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Spine 自动播放</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        #canvas-container {
+            width: 800px;
+            height: 600px;
+            position: relative;
+            border: 2px solid #444;
+            background: #111;
+        }
+        .controls {
+            margin: 15px 0;
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #0078d7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #005a9e;
+        }
+        #status {
+            margin: 10px 0;
+            color: #00ff00;
+        }
+        .anim-list {
+            margin-top: 20px;
+            max-width: 800px;
+            width: 100%;
+        }
+        .anim-item {
+            padding: 8px;
+            background: #222;
+            margin: 4px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>GitHub Spine 动画自动播放器</h1>
+    <div id="status">加载中...</div>
+    <div class="controls">
+        <button id="prev">上一个</button>
+        <button id="next">下一个</button>
+        <button id="auto">自动播放</button>
+    </div>
+    <div id="canvas-container"></div>
+    <div class="anim-list" id="anim-list"></div>
+
+    <!-- Spine WebGL 运行时 -->
+    <script src="https://unpkg.com/@esotericsoftware/spine-player@4.2/dist/iife/spine-player.min.js"></script>
+    <script>
+        // ========== 配置区 ==========
+        const GITHUB_USER = "sou2670519569-ship-it";
+        const GITHUB_REPO = "spine-";
+        const GITHUB_BRANCH = "main"; // 分支
+        const ANIM_INTERVAL = 5000; // 自动切换间隔(ms)
+        // ==========================
+
+        let currentIndex = 0;
+        let animFolders = [];
+        let player = null;
+        let autoPlayTimer = null;
+        let isAutoPlaying = false;
+
+        // 1. 从GitHub API获取所有文件夹
+        async function loadSpineFolders() {
+            try {
+                setStatus("正在读取GitHub仓库...");
+                const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents?ref=${GITHUB_BRANCH}`;
+                const res = await fetch(apiUrl);
+                const items = await res.json();
+                
+                // 筛选文件夹（假设Spine动画各占一个文件夹）
+                animFolders = items
+                    .filter(item => item.type === "dir")
+                    .map(item => item.name);
+                
+                if (animFolders.length === 0) {
+                    setStatus("未找到任何Spine动画文件夹");
+                    return;
+                }
+                
+                setStatus(`找到 ${animFolders.length} 个动画`);
+                renderAnimList();
+                loadAnimation(0);
+            } catch (err) {
+                setStatus("加载失败：" + err.message);
+                console.error(err);
+            }
+        }
+
+        // 2. 加载指定文件夹的Spine动画
+        async function loadAnimation(index) {
+            if (index < 0 || index >= animFolders.length) return;
+            currentIndex = index;
+            const folder = animFolders[index];
+            setStatus(`正在加载：${folder}`);
+
+            // 销毁旧播放器
+            if (player) {
+                player.dispose();
+                document.getElementById("canvas-container").innerHTML = "";
+            }
+
+            // GitHub raw 地址
+            const baseUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${folder}`;
+            const jsonUrl = `${baseUrl}/${folder}.json`;
+            const atlasUrl = `${baseUrl}/${folder}.atlas`;
+
+            try {
+                // 创建播放器
+                player = new spine.SpinePlayer("canvas-container", {
+                    jsonUrl: jsonUrl,
+                    atlasUrl: atlasUrl,
+                    alpha: true,
+                    backgroundColor: "#000000",
+                    viewport: {
+                        x: 0.5,
+                        y: 0.5,
+                        width: 800,
+                        height: 600,
+                        preMultipliedAlpha: true
+                    },
+                    animation: "idle", // 默认动画名
+                    loop: true,
+                    showControls: false
+                });
+
+                setStatus(`正在播放：${folder}（${currentIndex + 1}/${animFolders.length}）`);
+            } catch (err) {
+                setStatus(`播放失败：${folder}`);
+                console.error(err);
+            }
+        }
+
+        // 3. 自动播放控制
+        function startAutoPlay() {
+            if (isAutoPlaying) return;
+            isAutoPlaying = true;
+            document.getElementById("auto").textContent = "停止自动";
+            autoPlayTimer = setInterval(() => {
+                nextAnim();
+            }, ANIM_INTERVAL);
+        }
+
+        function stopAutoPlay() {
+            isAutoPlaying = false;
+            document.getElementById("auto").textContent = "自动播放";
+            clearInterval(autoPlayTimer);
+        }
+
+        function nextAnim() {
+            let idx = (currentIndex + 1) % animFolders.length;
+            loadAnimation(idx);
+        }
+
+        function prevAnim() {
+            let idx = (currentIndex - 1 + animFolders.length) % animFolders.length;
+            loadAnimation(idx);
+        }
+
+        // 辅助：更新状态
+        function setStatus(text) {
+            document.getElementById("status").textContent = text;
+        }
+
+        // 渲染动画列表
+        function renderAnimList() {
+            const list = document.getElementById("anim-list");
+            list.innerHTML = "";
+            animFolders.forEach((name, i) => {
+                const div = document.createElement("div");
+                div.className = "anim-item";
+                div.textContent = `${i + 1}. ${name}`;
+                div.onclick = () => loadAnimation(i);
+                list.appendChild(div);
+            });
+        }
+
+        // 绑定按钮
+        document.getElementById("prev").onclick = prevAnim;
+        document.getElementById("next").onclick = nextAnim;
+        document.getElementById("auto").onclick = () => {
+            isAutoPlaying ? stopAutoPlay() : startAutoPlay();
+        };
+
+        // 启动
+        window.onload = loadSpineFolders;
+    </script>
+</body>
+</html>
