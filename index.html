@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spine Viewer - GitHub</title>
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+    body { background: #111; color: #fff; overflow: hidden; }
+    .container { display: flex; height: 100vh; }
+    .sidebar { width: 320px; background: #1a1a1a; padding: 16px; border-right: 1px solid #333; overflow-y: auto; }
+    .viewer { flex: 1; position: relative; background: #000; display: flex; align-items: center; justify-content: center; }
+    #canvas { width: 100%; height: 100%; }
+    .panel { margin-bottom: 20px; }
+    .panel h3 { font-size: 14px; margin-bottom: 8px; color: #ccc; }
+    input, select, button { width: 100%; padding: 8px; margin: 4px 0; background: #222; border: 1px solid #444; color: #fff; border-radius: 4px; }
+    button { cursor: pointer; background: #0066cc; border: none; }
+    button:hover { background: #0088ff; }
+    .github-input { display: flex; gap: 4px; }
+    .github-input input { flex: 1; }
+    .file-list { max-height: 200px; overflow-y: auto; margin: 8px 0; }
+    .file-item { padding: 6px; cursor: pointer; border-radius: 4px; }
+    .file-item:hover { background: #333; }
+    .file-item.active { background: #0066cc; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="sidebar">
+    <div class="panel">
+      <h3>GitHub 仓库</h3>
+      <div class="github-input">
+        <input type="text" id="repo" placeholder="用户名/仓库名" value="esotericsoftware/spine-runtimes">
+        <button onclick="loadGitHubRepo()">加载</button>
+      </div>
+      <div class="file-list" id="fileList"></div>
+    </div>
+
+    <div class="panel">
+      <h3>动画控制</h3>
+      <select id="animation"></select>
+      <button onclick="playAnimation()">播放</button>
+      <button onclick="pauseAnimation()">暂停</button>
+    </div>
+
+    <div class="panel">
+      <h3>显示设置</h3>
+      <input type="color" id="bgColor" value="#000000">
+      <input type="number" id="scale" value="1" step="0.1" min="0.1" max="5" placeholder="缩放">
+      <input type="number" id="xPos" value="0.5" step="0.01" min="0" max="1" placeholder="X位置">
+      <input type="number" id="yPos" value="0.5" step="0.01" min="0" max="1" placeholder="Y位置">
+      <button onclick="applySettings()">应用</button>
+    </div>
+  </div>
+
+  <div class="viewer">
+    <canvas id="canvas"></canvas>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="https://raw.githubusercontent.com/EsotericSoftware/spine-runtimes/4.1/spine-ts/spine-webgl/dist/iife/spine-webgl.js"></script>
+
+<script>
+let canvas, gl, shader, skeletalMesh, activeAnimation;
+let skeleton, state, stateData;
+let githubFiles = [];
+
+// 初始化Spine
+function initSpine() {
+  canvas = document.getElementById("canvas");
+  const config = { alpha: true };
+  gl = canvas.getContext("webgl", config) || canvas.getContext("experimental-webgl", config);
+  
+  if (!gl) { alert("WebGL不可用"); return; }
+  
+  spine.SkeletonRenderer.newInstance().then(renderer => {
+    window.renderer = renderer;
+    shader = renderer.shader;
+    skeletalMesh = renderer.skeletalMesh;
+    resize();
+    window.addEventListener("resize", resize);
+  });
+}
+
+// 加载GitHub仓库
+async function loadGitHubRepo() {
+  const repo = document.getElementById("repo").value.trim();
+  if (!repo) return alert("输入仓库名");
+  
+  const api = `https://api.github.com/repos/${repo}/contents`;
+  try {
+    const res = await fetch(api);
+    const data = await res.json();
+    githubFiles = data.filter(f => 
+      f.name.endsWith(".json") || f.name.endsWith(".skel") || f.name.endsWith(".atlas")
+    );
+    renderFileList();
+  } catch (e) { alert("加载失败"); console.error(e); }
+}
+
+// 渲染文件列表
+function renderFileList() {
+  const list = document.getElementById("fileList");
+  list.innerHTML = "";
+  githubFiles.forEach(file => {
+    const div = document.createElement("div");
+    div.className = "file-item";
+    div.textContent = file.name;
+    div.onclick = () => loadSpineFromGitHub(file);
+    list.appendChild(div);
+  });
+}
+
+// 从GitHub加载Spine
+async function loadSpineFromGitHub(file) {
+  const rawUrl = file.download_url;
+  const ext = file.name.split(".").pop();
+  
+  try {
+    if (ext === "json" || ext === "skel") {
+      const atlasUrl = rawUrl.replace(/\.(json|skel)$/, ".atlas");
+      loadSpine(rawUrl, atlasUrl);
+    }
+  } catch (e) { console.error(e); }
+}
+
+// 加载Spine动画
+function loadSpine(skeletonUrl, atlasUrl) {
+  const atlas = new spine.TextureAtlas(atlasUrl, path => {
+    const tex = new spine.GLTexture(gl, path);
+    fetch(path).then(res => res.blob()).then(blob => {
+      const img = new Image();
+      img.onload = () => { tex.setAsImage(img); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); };
+      img.src = URL.createObjectURL(blob);
+    });
+    return tex;
+  });
+  
+  const atlasLoader = new spine.AtlasAttachmentLoader(atlas);
+  const skeletonParser = skeletonUrl.endsWith(".skel") 
+    ? new spine.SkeletonBinary(atlasLoader)
+    : new spine.SkeletonJson(atlasLoader);
+  
+  fetch(skeletonUrl)
+    .then(res => res.arrayBuffer())
+    .then(data => {
+      skeleton = skeletonParser.readSkeletonData(new Uint8Array(data));
+      stateData = new spine.AnimationStateData(skeleton);
+      state = new spine.AnimationState(stateData);
+      
+      // 填充动画列表
+      const select = document.getElementById("animation");
+      select.innerHTML = "";
+      skeleton.animations.forEach(anim => {
+        const opt = document.createElement("option");
+        opt.value = anim.name;
+        opt.textContent = anim.name;
+        select.appendChild(opt);
+      });
+      
+      // 自动播放第一个
+      if (skeleton.animations.length) {
+        playAnimation(skeleton.animations[0].name);
+      }
+      
+      requestAnimationFrame(render);
+    });
+}
+
+// 渲染循环
+function render() {
+  if (!skeleton || !state) return;
+  
+  gl.clearColor(0,0,0,0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  
+  state.update(1/60);
+  state.apply(skeleton);
+  skeleton.updateWorldTransform(spine.MixPose.Setup);
+  
+  renderer.drawSkeleton(skeleton);
+  requestAnimationFrame(render);
+}
+
+// 播放动画
+function playAnimation(name) {
+  name = name || document.getElementById("animation").value;
+  if (!name || !state) return;
+  state.setAnimation(0, name, true);
+  activeAnimation = name;
+}
+
+function pauseAnimation() {
+  if (state) state.clearTracks();
+}
+
+// 应用设置
+function applySettings() {
+  if (!skeleton) return;
+  const scale = parseFloat(document.getElementById("scale").value);
+  const x = parseFloat(document.getElementById("xPos").value);
+  const y = parseFloat(document.getElementById("yPos").value);
+  skeleton.scaleX = scale;
+  skeleton.scaleY = scale;
+  skeleton.x = canvas.width * (x - 0.5);
+  skeleton.y = canvas.height * (0.5 - y);
+  document.querySelector(".viewer").style.background = document.getElementById("bgColor").value;
+}
+
+// 适配画布
+function resize() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  if (renderer) renderer.resize(canvas.width, canvas.height);
+}
+
+// 启动
+window.onload = () => {
+  initSpine();
+  loadGitHubRepo();
+};
+</script>
+</body>
+</html>
