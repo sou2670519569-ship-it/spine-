@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Spine 全自动播放器</title>
+<script src="https://unpkg.com/@esotericsoftware/spine-player@4.2/dist/iife/spine-player.min.js"></script>
+<style>
+*{margin:0;padding:0}
+body{background:#111;overflow:hidden}
+canvas{display:block;width:100vw;height:100vh}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<script>
+// 相对根目录，Pages 自动适配
+const BASE = location.origin + location.pathname.replace(/index\.html$/,"");
+let player = null;
+let fileList = [];
+let curIdx = 0;
+
+// 1. 拿当前仓库目录列表（纯Pages原生目录遍历，无跨域）
+async function getFileList(){
+  const res = await fetch("./");
+  const html = await res.text();
+  const reg = /href="([^"]+?)"/g;
+  let m, paths = new Set();
+  while((m = reg.exec(html))){
+    let p = decodeURIComponent(m[1]);
+    if(!p||p.startsWith("?")||p.startsWith("#"))continue;
+    paths.add(p);
+  }
+  return [...paths];
+}
+
+// 2. 匹配 spine 组合
+function matchSpine(paths){
+  let map = new Map();
+  paths.forEach(p=>{
+    let pre = p.replace(/\.(json|skel|atlas)$/,"");
+    if(!map.has(pre)) map.set(pre,{});
+    if(p.endsWith(".json")) map.get(pre).json = p;
+    if(p.endsWith(".skel")) map.get(pre).skel = p;
+    if(p.endsWith(".atlas")) map.get(pre).atlas = p;
+  });
+  // 必须带 atlas
+  for(let [k,v] of map){
+    if(v.atlas&&(v.json||v.skel)) fileList.push(v);
+  }
+}
+
+// 3. 加载动画
+function load(index){
+  if(index<0)index=fileList.length-1;
+  if(index>=fileList.length)index=0;
+  curIdx = index;
+  let cfg = {
+    canvas:"c",
+    atlasUrl: BASE + fileList[index].atlas,
+    backgroundColor:"#111",
+    showControls:false,
+    mouseControl:true // 内置：左键拖拽 + 滚轮缩放
+  };
+  if(fileList[index].json)cfg.jsonUrl = BASE + fileList[index].json;
+  if(fileList[index].skel)cfg.skelUrl = BASE + fileList[index].skel;
+  if(player)player.dispose();
+  player = new spine.SpinePlayer(cfg);
+}
+
+// 4. 单击切换下一个
+document.getElementById("c").addEventListener("click",()=>{
+  load(curIdx+1);
+});
+
+// 启动
+(async ()=>{
+  const paths = await getFileList();
+  matchSpine(paths);
+  load(0);
+})();
+</script>
+</body>
+</html>
