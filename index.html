@@ -1,0 +1,15 @@
+<!-- 引入 Spine Player 核心文件 -->
+<link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.2.*/dist/spine-player.css">
+<script src="https://unpkg.com/@esotericsoftware/spine-player@4.2.*/dist/iife/spine-player.js"></script>
+
+<!-- 播放器容器 -->
+<div id="player-container" style="width: 100%; height: 100vh;"></div>
+
+<script>
+    new spine.SpinePlayer("player-container", {
+        skeleton: "assets/game_A/character_01/character.json",
+        atlas: "assets/game_A/character_01/character.atlas",
+        alpha: true, // 启用透明背景
+        backgroundColor: "#00000000"
+    });
+</script>
