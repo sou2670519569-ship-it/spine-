@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -6,131 +6,81 @@
 <title>Spine 动画播放器</title>
 <link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.1.0/dist/spine-player.min.css">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  html,body{height:100%}
-  body{display:flex;background:#1a1a1a;color:#fff}
-  #sidebar{width:280px;background:#2a2a2a;padding:12px;overflow-y:auto;border-right:1px solid #444}
-  #player{flex:1;position:relative}
-  .folder{margin:8px 0 4px 4px;font-weight:bold;color:#4fc3f7}
-  .anim{padding:6px 10px;margin:3px 0;background:#3a3a3a;border-radius:6px;cursor:pointer}
-  .anim:hover{background:#4a4a4a}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{display:flex;background:#1a1a1a;color:#fff}
+#sidebar{width:280px;background:#2a2a2a;padding:12px;overflow-y:auto;border-right:1px solid #444}
+#player{flex:1;position:relative}
+.folder{margin:8px 0 4px 4px;font-weight:bold;color:#4fc3f7}
+.anim{padding:6px 10px;margin:3px 0;background:#3a3a3a;border-radius:6px;cursor:pointer}
+.anim:hover{background:#4a4a4a}
 </style>
 </head>
 <body>
-<div id="sidebar">加载中...</div>
+<div id="sidebar">正在加载动画列表...</div>
 <div id="player"></div>
 
 <script src="https://unpkg.com/@esotericsoftware/spine-player@4.1.0/dist/iife/spine-player.min.js"></script>
 <script>
 let player = null;
-const basePath = window.location.pathname;
+const baseUrl = window.location.href;
 
-// 自动遍历所有子文件夹
-async function scanAll() {
-  const sidebar = document.getElementById('sidebar');
-  sidebar.innerHTML = "正在扫描所有子文件夹...";
-
-  const files = await getAllFiles('');
-  const animations = groupAnimations(files);
-
-  renderList(animations);
-}
-
-// 递归获取所有文件
-async function getAllFiles(path) {
-  try {
-    const fullPath = basePath + path;
-    const res = await fetch(fullPath, { method: 'GET' });
-    const text = await res.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(text, 'text/html');
-    const links = Array.from(doc.querySelectorAll('a'))
-      .map(a => a.getAttribute('href'))
-      .filter(h => h && !h.startsWith('?') && !h.includes('..'))
-      .map(h => h.replace(basePath, '').split('?')[0]);
-
-    const files = [];
-    for (const l of links) {
-      if (l.endsWith('/')) {
-        const subFiles = await getAllFiles(l);
-        files.push(...subFiles);
-      } else {
-        files.push(path + l);
-      }
-    }
-    return files;
-  } catch (e) {
-    return [];
+// 直接手动定义你的动画路径（适配你的仓库结构）
+const animations = [
+  // 格式：{ name: "显示名称", skeleton: "文件路径", atlas: "文件路径" }
+  // 示例路径：三国志幻想大陆/100001/skeleton.skel
+  {
+    name: "三国志幻想大陆/100001/skeleton",
+    skeleton: "三国志幻想大陆/100001/skeleton.skel",
+    atlas: "三国志幻想大陆/100001/skeleton.atlas"
+  },
+  {
+    name: "三国志幻想大陆/102001/skeleton",
+    skeleton: "三国志幻想大陆/102001/skeleton.skel",
+    atlas: "三国志幻想大陆/102001/skeleton.atlas"
   }
-}
+  // 你可以继续按这个格式添加其他文件夹里的动画
+];
 
-// 分组动画（json/skel + atlas + png）
-function groupAnimations(files) {
-  const map = {};
-  files.forEach(f => {
-    const ext = f.split('.').pop().toLowerCase();
-    if (!['json', 'skel', 'atlas', 'png'].includes(ext)) return;
-    const base = f.replace(/\.\w+$/, '');
-    if (!map[base]) map[base] = [];
-    map[base].push(ext);
-  });
-
-  const valid = [];
-  for (const base in map) {
-    const exts = map[base];
-    const hasData = exts.includes('json') || exts.includes('skel');
-    const hasAtlas = exts.includes('atlas');
-    const hasPng = exts.includes('png');
-    if (hasData && hasAtlas && hasPng) {
-      valid.push({
-        base,
-        type: exts.includes('skel') ? 'skel' : 'json'
-      });
-    }
-  }
-  return valid;
-}
-
-// 渲染侧边栏
-function renderList(anims) {
+// 渲染列表并绑定点击事件
+function renderList() {
   const sidebar = document.getElementById('sidebar');
-  if (anims.length === 0) {
-    sidebar.innerHTML = "❌ 未找到可用动画<br>确保每个动画有：json/skel + atlas + png";
+  if (animations.length === 0) {
+    sidebar.innerHTML = "❌ 未配置任何动画，请按格式添加路径";
     return;
   }
 
-  const folders = {};
-  anims.forEach(a => {
-    const pathArr = a.base.split('/');
-    const name = pathArr.pop();
-    const folder = pathArr.join('/') || '根目录';
-    if (!folders[folder]) folders[folder] = [];
-    folders[folder].push({ name, base: a.base, type: a.type });
+  sidebar.innerHTML = "";
+  const folderMap = {};
+  animations.forEach(anim => {
+    const parts = anim.name.split('/');
+    const folder = parts.slice(0, -1).join('/') || '根目录';
+    if (!folderMap[folder]) folderMap[folder] = [];
+    folderMap[folder].push({ name: parts.pop(), ...anim });
   });
 
-  sidebar.innerHTML = '';
-  for (const folder in folders) {
-    const fDiv = document.createElement('div');
-    fDiv.className = 'folder';
-    fDiv.textContent = `📂 ${folder}`;
-    sidebar.appendChild(fDiv);
+  for (const folder in folderMap) {
+    const folderDiv = document.createElement('div');
+    folderDiv.className = 'folder';
+    folderDiv.textContent = `📂 ${folder}`;
+    sidebar.appendChild(folderDiv);
 
-    folders[folder].forEach(anim => {
+    folderMap[folder].forEach(anim => {
       const item = document.createElement('div');
       item.className = 'anim';
       item.textContent = anim.name;
-      item.onclick = () => loadAnim(anim.base, anim.type);
+      item.onclick = () => loadAnimation(anim.skeleton, anim.atlas);
       sidebar.appendChild(item);
     });
   }
 }
 
 // 加载动画
-function loadAnim(base, type) {
+function loadAnimation(skeletonPath, atlasPath) {
   if (player) player.dispose();
   player = new spine.SpinePlayer('player', {
-    skeleton: `${base}.${type}`,
-    atlas: `${base}.atlas`,
+    skeleton: skeletonPath,
+    atlas: atlasPath,
     alpha: true,
     showControls: true,
     backgroundColor: "#111",
@@ -138,7 +88,8 @@ function loadAnim(base, type) {
   });
 }
 
-scanAll();
+// 初始化
+renderList();
 </script>
 </body>
 </html>
