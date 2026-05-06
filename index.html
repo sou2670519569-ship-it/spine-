@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spine 全自动播放器</title>
+<style>
+  *{margin:0;padding:0}
+  body{background:#000;overflow:hidden}
+  canvas{width:100vw;height:100vh;display:block;background:#000}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<script src="https://unpkg.com/@esotericsoftware/spine-player@4.2/dist/iife/spine-player.min.js"></script>
+<script>
+// ==========================================
+// 全自动扫描所有文件夹 + 所有spine文件
+// ==========================================
+const canvas = document.getElementById('canvas');
+let player;
+let animations = [];
+let current = 0;
+
+// 自动扫描所有子目录
+async function scanAll(path) {
+  try {
+    let res = await fetch(path);
+    let text = await res.text();
+    let urls = [...text.matchAll(/href="([^"]+)"/g)].map(m => decodeURIComponent(m[1]));
+    
+    for (let u of urls) {
+      if (u.startsWith('/') || u.startsWith('?') || u == '../') continue;
+      let full = path + u;
+      
+      if (u.endsWith('/')) {
+        await scanAll(full);
+      } else {
+        if (u.endsWith('.json') || u.endsWith('.skel')) {
+          let base = full.replace(/\.(json|skel)$/, '');
+          let atlas = base + '.atlas';
+          animations.push({ json: full, skel: full, atlas: atlas });
+        }
+      }
+    }
+  } catch (e) {}
+}
+
+// 播放
+function play(i) {
+  current = i % animations.length;
+  let a = animations[current];
+  if (player) player.dispose();
+  
+  player = new spine.SpinePlayer(canvas, {
+    atlasUrl: a.atlas,
+    jsonUrl: a.json.replace('.skel', '.json'),
+    skelUrl: a.skel.replace('.json', '.skel'),
+    backgroundColor: '#000',
+    mouseControl: true
+  });
+}
+
+// 点击切换
+canvas.addEventListener('click', () => play(current + 1));
+
+// 启动
+scanAll('./').then(() => {
+  if (animations.length) play(0);
+});
+</script>
+</body>
+</html>
