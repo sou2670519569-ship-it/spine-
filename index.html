@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Spine 万能播放器（JSON+SKEL）</title>
+<link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.2/dist/spine-player.css"/>
+<style>
+html,body{margin:0;padding:16px;background:#111;color:#eee;font-family:system-ui}
+.wrap{max-width:1400px;margin:0 auto}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;align-items:center}
+.ctrl select,.ctrl input,.ctrl button{
+  padding:6px 10px;background:#222;border:1px solid #444;color:#fff;border-radius:4px;
+}
+#player{width:100%;height:70vh;border:1px solid #333;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="ctrl">
+    <select id="fileList"><option>加载中...</option></select>
+    <input type="number" id="scale" value="1" step="0.05" placeholder="缩放"/>
+    <input type="number" id="posX" value="0.5" step="0.05" placeholder="X"/>
+    <input type="number" id="posY" value="0.5" step="0.05" placeholder="Y"/>
+    <input type="color" id="bg" value="#000000"/>
+    <button onclick="loadCurrent()">加载</button>
+  </div>
+  <div id="player"></div>
+</div>
+
+<script src="https://unpkg.com/@esotericsoftware/spine-player@4.2/dist/iife/spine-player.min.js"></script>
+<script>
+// ============ 你的仓库信息 ============
+const GH_OWNER = "sou2670519569-ship-it";
+const GH_REPO  = "spine-";
+const GH_BRANCH= "main";
+// ====================================
+
+let player = null;
+let fileList = [];
+
+// 自动读取仓库：同时支持 json + skel
+async function fetchRepoFiles(){
+  const api = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/?ref=${GH_BRANCH}`;
+  try{
+    const res = await fetch(api);
+    const data = await res.json();
+    
+    // 万能识别：.json 和 .skel 全都要！
+    fileList = data
+      .filter(item=>item.name.endsWith(".json") || item.name.endsWith(".skel"))
+      .map(item=>item.name);
+      
+    renderSelect();
+  }catch(e){
+    document.getElementById("fileList").innerHTML = `<option>加载失败</option>`;
+  }
+}
+
+function renderSelect(){
+  const sel = document.getElementById("fileList");
+  sel.innerHTML = "";
+  fileList.forEach(name=>{
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    sel.appendChild(opt);
+  });
+}
+
+// 自动判断格式加载
+function loadCurrent(){
+  const sel = document.getElementById("fileList");
+  const fileName = sel.value;
+  if(!fileName) return;
+
+  const baseRaw = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/`;
+  const atlasUrl = baseRaw + fileName.replace(/\.(json|skel)$/, ".atlas");
+
+  if(player) player.dispose();
+
+  // 自动判断格式
+  const config = {
+    atlasUrl,
+    scale: parseFloat(document.getElementById("scale").value)||1,
+    x: parseFloat(document.getElementById("posX").value)||0.5,
+    y: parseFloat(document.getElementById("posY").value)||0.5,
+    backgroundColor: document.getElementById("bg").value,
+    premultipliedAlpha: true
+  };
+
+  // 自动区分 json / skel
+  if(fileName.endsWith(".json")) config.jsonUrl = baseRaw + fileName;
+  else if(fileName.endsWith(".skel")) config.skelUrl = baseRaw + fileName;
+
+  player = new spine.SpinePlayer("player", config);
+}
+
+window.onload = ()=>{
+  fetchRepoFiles();
+  document.getElementById("fileList").addEventListener("change",loadCurrent);
+};
+</script>
+</body>
+</html>
