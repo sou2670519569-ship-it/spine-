@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Spine 动画播放器</title>
+    <!-- ====================== 仅需修改这里的配置项 ====================== -->
+    <script>
+        window.CONFIG = {
+            githubOwner: "sou2670519569-ship-it", // 例：octocat
+            githubRepo: "spine-",        // 例：spine-animations
+            githubBranch: "main",      // 例：main / master
+            spineVersion: "4.2",             // 必须和导出动画的Spine大版本一致！例：3.8/4.1/4.2
+        };
+    </script>
+    <!-- ================================================================== -->
+    <!-- Spine Web Player 官方CDN 自动匹配版本 -->
+    <link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@${spineVersion}.*/dist/spine-player.min.css">
+    <script src="https://unpkg.com/@esotericsoftware/spine-player@${spineVersion}.*/dist/iife/spine-player.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; display: flex; height: 100vh; overflow: hidden; }
+        /* 文件列表侧边栏 */
+        .file-list { width: 300px; background: #f5f5f5; overflow-y: auto; border-right: 1px solid #ddd; padding: 10px; }
+        .file-list h3 { margin-bottom: 10px; color: #333; }
+        .file-item { padding: 8px 10px; margin: 4px 0; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+        .file-item:hover { background: #e0e0e0; }
+        .file-item.active { background: #2196F3; color: white; }
+        .file-path { font-size: 12px; color: #666; margin-top: 2px; }
+        .file-item.active .file-path { color: #e3f2fd; }
+        /* 播放器区域 */
+        .player-container { flex: 1; position: relative; background: #1a1a1a; }
+        #player { width: 100%; height: 100%; }
+        .empty-tip { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #999; text-align: center; }
+        .error-tip { color: #ff5252; padding: 20px; }
+    </style>
+</head>
+<body>
+    <!-- 文件列表侧边栏 -->
+    <div class="file-list">
+        <h3>Spine 动画列表</h3>
+        <div id="fileListContainer">加载中...</div>
+    </div>
+    <!-- 播放器区域 -->
+    <div class="player-container">
+        <div id="player"></div>
+        <div class="empty-tip" id="emptyTip">请点击左侧动画文件开始播放</div>
+    </div>
+
+    <script>
+        const { githubOwner, githubRepo, githubBranch, spineVersion } = window.CONFIG;
+        const fileListContainer = document.getElementById('fileListContainer');
+        const emptyTip = document.getElementById('emptyTip');
+        let currentPlayer = null;
+        let activeItem = null;
+
+        // 替换CDN链接中的版本号
+        document.querySelector('link').href = document.querySelector('link').href.replace('${spineVersion}', spineVersion);
+        document.querySelector('script:last-of-type').src = document.querySelector('script:last-of-type').src.replace('${spineVersion}', spineVersion);
+
+        // 1. 调用GitHub API 递归获取仓库所有文件
+        async function loadAllSpineFiles() {
+            try {
+                // 一次性获取整个仓库的文件树，递归所有子文件夹
+                const apiUrl = `https://api.github.com/repos/${githubOwner}/${githubRepo}/git/trees/${githubBranch}?recursive=1`;
+                const res = await fetch(apiUrl);
+                if (!res.ok) throw new Error(`仓库访问失败：${res.status} ${res.statusText}`);
+                
+                const data = await res.json();
+                // 过滤出所有Spine骨骼文件
+                const spineFiles = data.tree.filter(item => {
+                    const name = item.path.toLowerCase();
+                    return name.endsWith('.spine') || name.endsWith('.json') || name.endsWith('.skel');
+                });
+
+                if (spineFiles.length === 0) {
+                    fileListContainer.innerHTML = '<div class="error-tip">未在仓库中找到任何Spine动画文件</div>';
+                    return;
+                }
+
+                // 渲染文件列表
+                renderFileList(spineFiles);
+            } catch (err) {
+                fileListContainer.innerHTML = `<div class="error-tip">加载失败：${err.message}<br>请检查配置项是否正确，仓库是否为公开状态</div>`;
+                console.error(err);
+            }
+        }
+
+        // 2. 渲染文件列表
+        function renderFileList(files) {
+            fileListContainer.innerHTML = '';
+            files.forEach(file => {
+                const filePath = file.path;
+                const fileName = filePath.split('/').pop();
+                const fileDir = filePath.substring(0, filePath.lastIndexOf('/'));
+
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `
+                    <div>${fileName}</div>
+                    <div class="file-path">${fileDir || '根目录'}</div>
+                `;
+                // 点击加载动画
+                item.addEventListener('click', () => loadSpineAnimation(filePath, item));
+                fileListContainer.appendChild(item);
+            });
+        }
+
+        // 3. 加载并播放Spine动画
+        function loadSpineAnimation(filePath, item) {
+            // 销毁之前的播放器
+            if (currentPlayer) {
+                currentPlayer.dispose();
+                currentPlayer = null;
+            }
+            // 高亮当前选中项
+            if (activeItem) activeItem.classList.remove('active');
+            activeItem = item;
+            item.classList.add('active');
+            emptyTip.style.display = 'none';
+
+            // 拼接文件raw地址（GitHub Pages同域无跨域问题）
+            const baseUrl = `https://raw.githubusercontent.com/${githubOwner}/${githubRepo}/${githubBranch}/`;
+            const fileBaseName = filePath.substring(0, filePath.lastIndexOf('.'));
+            const skeletonUrl = baseUrl + filePath;
+            const atlasUrl = baseUrl + fileBaseName + '.atlas';
+
+            // 初始化Spine播放器
+            currentPlayer = new spine.SpinePlayer('player', {
+                jsonUrl: filePath.toLowerCase().endsWith('.json') ? skeletonUrl : undefined,
+                skelUrl: filePath.toLowerCase().endsWith('.spine') || filePath.toLowerCase().endsWith('.skel') ? skeletonUrl : undefined,
+                atlasUrl: atlasUrl,
+                animation: 'idle', // 默认播放idle动画，无则自动播放第一个动画
+                showControls: true, // 显示播放控制条
+                premultipliedAlpha: true,
+                backgroundColor: '#1a1a1a',
+                fullscreenEnabled: true,
+                success: () => console.log('动画加载成功'),
+                error: (err) => {
+                    console.error('动画加载失败', err);
+                    emptyTip.style.display = 'block';
+                    emptyTip.innerHTML = `动画加载失败<br>请检查：1. 版本是否匹配<br>2. atlas/png文件是否同目录同名<br>${err.message}`;
+                }
+            });
+        }
+
+        // 页面加载完成后执行
+        window.addEventListener('DOMContentLoaded', loadAllSpineFiles);
+    </script>
+</body>
+</html>
