@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全版本Spine播放器 - GitHub版</title>
+    <!-- ====================== 仅需修改这里的配置项 ====================== -->
+    <script>
+        window.CONFIG = {
+            githubOwner: "sou2670519569-ship-it", // 例：octocat
+            githubRepo: "spine-",        // 例：spine-animations
+            githubBranch: "main",      // 例：main / master
+            // 常用Spine版本CDN（会自动根据文件版本选择，无需修改这里）
+            spineCdns: {
+                "3.8": "https://unpkg.com/@esotericsoftware/spine-player@3.8.99/dist/",
+                "4.0": "https://unpkg.com/@esotericsoftware/spine-player@4.0.64/dist/",
+                "4.1": "https://unpkg.com/@esotericsoftware/spine-player@4.1.25/dist/",
+                "4.2": "https://unpkg.com/@esotericsoftware/spine-player@4.2.29/dist/"
+            }
+        };
+    </script>
+    <!-- ================================================================== -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; display: flex; height: 100vh; overflow: hidden; }
+        /* 文件列表侧边栏 */
+        .file-list { width: 320px; background: #f5f5f5; overflow-y: auto; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
+        .list-header { padding: 15px; border-bottom: 1px solid #ddd; background: #fff; }
+        .list-header h3 { margin-bottom: 5px; }
+        .list-header p { font-size: 12px; color: #666; }
+        .file-items { flex: 1; overflow-y: auto; padding: 10px; }
+        .file-item { padding: 10px; margin: 5px 0; border-radius: 6px; cursor: pointer; background: #fff; border: 1px solid #eee; transition: all 0.2s; }
+        .file-item:hover { border-color: #2196F3; }
+        .file-item.active { background: #2196F3; color: white; border-color: #2196F3; }
+        .file-name { font-weight: 500; word-break: break-all; }
+        .file-meta { display: flex; justify-content: space-between; margin-top: 5px; font-size: 11px; }
+        .file-path { color: #666; }
+        .file-version { background: #e3f2fd; color: #1976d2; padding: 1px 6px; border-radius: 4px; }
+        .file-item.active .file-path { color: #e3f2fd; }
+        .file-item.active .file-version { background: #fff; color: #2196F3; }
+        /* 播放器区域 */
+        .player-container { flex: 1; position: relative; background: #1a1a1a; display: flex; flex-direction: column; }
+        .player-header { padding: 10px 15px; background: #2d2d2d; color: #fff; display: flex; justify-content: space-between; align-items: center; }
+        .player-info { font-size: 13px; }
+        .version-selector { display: flex; align-items: center; gap: 10px; }
+        .version-selector select { padding: 5px 10px; border-radius: 4px; border: none; }
+        #player { flex: 1; width: 100%; }
+        .empty-tip, .error-tip { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+        .empty-tip { color: #999; }
+        .error-tip { color: #ff5252; max-width: 600px; line-height: 1.6; }
+        .loading { color: #fff; text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+    <!-- 文件列表侧边栏 -->
+    <div class="file-list">
+        <div class="list-header">
+            <h3>Spine 动画列表</h3>
+            <p id="statusText">正在扫描仓库文件...</p>
+        </div>
+        <div class="file-items" id="fileListContainer"></div>
+    </div>
+    <!-- 播放器区域 -->
+    <div class="player-container">
+        <div class="player-header" id="playerHeader" style="display: none;">
+            <div class="player-info" id="playerInfo">未选择动画</div>
+            <div class="version-selector">
+                <span>Spine版本：</span>
+                <select id="versionSelect" onchange="reloadWithSelectedVersion()">
+                    <option value="3.8">3.8.x</option>
+                    <option value="4.0">4.0.x</option>
+                    <option value="4.1">4.1.x</option>
+                    <option value="4.2">4.2.x</option>
+                </select>
+            </div>
+        </div>
+        <div id="player"></div>
+        <div class="empty-tip" id="emptyTip">请点击左侧动画文件开始播放</div>
+    </div>
+
+    <script>
+        const { githubOwner, githubRepo, githubBranch, spineCdns } = window.CONFIG;
+        const fileListContainer = document.getElementById('fileListContainer');
+        const statusText = document.getElementById('statusText');
+        const emptyTip = document.getElementById('emptyTip');
+        const playerHeader = document.getElementById('playerHeader');
+        const playerInfo = document.getElementById('playerInfo');
+        const versionSelect = document.getElementById('versionSelect');
+        
+        let allSpineFiles = [];
+        let currentPlayer = null;
+        let activeItem = null;
+        let currentFile = null;
+        let loadedSpineVersion = null;
+
+        // 1. 递归遍历GitHub仓库所有文件夹（解决文件读取不全）
+        async function fetchAllFiles(path = '') {
+            const apiUrl = `https://api.github.com/repos/${githubOwner}/${githubRepo}/contents/${path}?ref=${githubBranch}`;
+            try {
+                const res = await fetch(apiUrl);
+                if (!res.ok) return [];
+                const items = await res.json();
+                
+                let files = [];
+                for (const item of items) {
+                    if (item.type === 'dir') {
+                        // 递归遍历子文件夹
+                        const subFiles = await fetchAllFiles(item.path);
+                        files = files.concat(subFiles);
+                    } else if (item.type === 'file') {
+                        // 收集Spine骨骼文件
+                        const name = item.name.toLowerCase();
+                        if (name.endsWith('.json') || name.endsWith('.skel') || name.endsWith('.spine')) {
+                            files.push({
+                                path: item.path,
+                                name: item.name,
+                                dir: item.path.substring(0, item.path.lastIndexOf('/')),
+                                detectedVersion: null
+                            });
+                        }
+                    }
+                }
+                return files;
+            } catch (err) {
+                console.error('遍历文件夹失败:', path, err);
+                return [];
+            }
+        }
+
+        // 2. 自动检测Spine文件版本（仅支持.json，二进制文件需手动选）
+        async function detectSpineVersion(file) {
+            if (!file.name.toLowerCase().endsWith('.json')) return null;
+            
+            try {
+                // 使用jsdelivr CDN读取文件内容（比raw快且跨域友好）
+                const rawUrl = `https://cdn.jsdelivr.net/gh/${githubOwner}/${githubRepo}@${githubBranch}/${file.path}`;
+                const res = await fetch(rawUrl);
+                if (!res.ok) return null;
+                
+                const json = await res.json();
+                if (json.spine) {
+                    // 提取大版本号，如 "4.2.21" -> "4.2"
+                    const majorVersion = json.spine.split('.').slice(0, 2).join('.');
+                    return majorVersion;
+                }
+                return null;
+            } catch (err) {
+                console.error('检测版本失败:', file.path, err);
+                return null;
+            }
+        }
+
+        // 3. 初始化加载所有文件
+        async function init() {
+            statusText.textContent = '正在扫描仓库文件...';
+            // 递归获取所有文件
+            allSpineFiles = await fetchAllFiles('');
+            
+            if (allSpineFiles.length === 0) {
+                statusText.textContent = '未找到任何Spine文件';
+                fileListContainer.innerHTML = '<div class="error-tip" style="padding:20px;">仓库中未找到 .json/.skel/.spine 文件</div>';
+                return;
+            }
+
+            statusText.textContent = `共找到 ${allSpineFiles.length} 个文件，正在检测版本...`;
+            
+            // 并行检测所有.json文件的版本
+            let detectedCount = 0;
+            for (const file of allSpineFiles) {
+                file.detectedVersion = await detectSpineVersion(file);
+                if (file.detectedVersion) detectedCount++;
+            }
+
+            statusText.textContent = `共 ${allSpineFiles.length} 个文件，已自动识别 ${detectedCount} 个版本`;
+            renderFileList();
+        }
+
+        // 4. 渲染文件列表
+        function renderFileList() {
+            fileListContainer.innerHTML = '';
+            allSpineFiles.forEach(file => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-meta">
+                        <span class="file-path">${file.dir || '根目录'}</span>
+                        <span class="file-version">${file.detectedVersion || '未知版本'}</span>
+                    </div>
+                `;
+                item.addEventListener('click', () => loadSpineAnimation(file, item));
+                fileListContainer.appendChild(item);
+            });
+        }
+
+        // 5. 动态加载对应版本的Spine Player
+        async function loadSpinePlayer(version) {
+            if (loadedSpineVersion === version) return;
+            
+            // 移除旧版本的CSS和JS
+            const oldLinks = document.querySelectorAll('link[data-spine-version]');
+            const oldScripts = document.querySelectorAll('script[data-spine-version]');
+            oldLinks.forEach(el => el.remove());
+            oldScripts.forEach(el => el.remove());
+
+            // 加载新版本
+            const cdnBase = spineCdns[version] || spineCdns['4.2'];
+            
+            // 加载CSS
+            const cssLink = document.createElement('link');
+            cssLink.rel = 'stylesheet';
+            cssLink.href = `${cdnBase}spine-player.min.css`;
+            cssLink.setAttribute('data-spine-version', version);
+            document.head.appendChild(cssLink);
+
+            // 加载JS
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = `${cdnBase}iife/spine-player.min.js`;
+                script.setAttribute('data-spine-version', version);
+                script.onload = () => {
+                    loadedSpineVersion = version;
+                    resolve();
+                };
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        // 6. 播放Spine动画
+        async function loadSpineAnimation(file, item) {
+            currentFile = file;
+            
+            // UI更新
+            if (activeItem) activeItem.classList.remove('active');
+            activeItem = item;
+            item.classList.add('active');
+            emptyTip.style.display = 'none';
+            playerHeader.style.display = 'flex';
+            playerInfo.textContent = `${file.name} (${file.dir || '根目录'})`;
+            
+            // 设置版本选择器
+            const versionToUse = file.detectedVersion || '4.2';
+            versionSelect.value = versionToUse;
+
+            try {
+                // 先加载对应版本的播放器
+                await loadSpinePlayer(versionToUse);
+                
+                // 销毁之前的播放器
+                if (currentPlayer) {
+                    currentPlayer.dispose();
+                    currentPlayer = null;
+                }
+
+                // 拼接文件地址（用jsdelivr CDN，比raw稳定）
+                const baseUrl = `https://cdn.jsdelivr.net/gh/${githubOwner}/${githubRepo}@${githubBranch}/`;
+                const fileBaseName = file.path.substring(0, file.path.lastIndexOf('.'));
+                const skeletonUrl = baseUrl + file.path;
+                const atlasUrl = baseUrl + fileBaseName + '.atlas';
+
+                // 初始化播放器
+                const playerConfig = {
+                    atlasUrl: atlasUrl,
+                    animation: 'idle',
+                    showControls: true,
+                    premultipliedAlpha: true,
+                    backgroundColor: '#1a1a1a',
+                    fullscreenEnabled: true,
+                    success: () => console.log('✅ 动画加载成功'),
+                    error: (player, msg) => {
+                        console.error('❌ 动画加载失败:', msg);
+                        showError(`
+                            加载失败！<br><br>
+                            <strong>可能原因：</strong><br>
+                            1. 版本不对（当前用的 ${versionToUse}），请在右上角切换版本重试<br>
+                            2. 缺少同目录同名的 .atlas 或 .png 文件<br>
+                            3. 文件路径或命名不匹配<br><br>
+                            <strong>错误详情：</strong>${msg}
+                        `);
+                    }
+                };
+
+                // 根据文件后缀设置json或skel
+                const lowerPath = file.path.toLowerCase();
+                if (lowerPath.endsWith('.json')) {
+                    playerConfig.jsonUrl = skeletonUrl;
+                } else {
+                    playerConfig.skelUrl = skeletonUrl;
+                }
+
+                currentPlayer = new spine.SpinePlayer('player', playerConfig);
+
+            } catch (err) {
+                console.error('初始化失败:', err);
+                showError(`初始化播放器失败：${err.message}`);
+            }
+        }
+
+        // 7. 手动切换版本后重新加载
+        window.reloadWithSelectedVersion = async function() {
+            if (!currentFile || !activeItem) return;
+            await loadSpineAnimation(currentFile, activeItem);
+        };
+
+        // 显示错误信息
+        function showError(html) {
+            if (currentPlayer) {
+                currentPlayer.dispose();
+                currentPlayer = null;
+            }
+            emptyTip.innerHTML = html;
+            emptyTip.className = 'error-tip';
+            emptyTip.style.display = 'block';
+        }
+
+        // 启动
+        init();
+    </script>
+</body>
+</html>
