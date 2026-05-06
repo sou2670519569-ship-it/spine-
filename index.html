@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全站 Spine 自动扫描器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .canvas-wrapper {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #canvas {
+            border: 1px solid #eee;
+            background: #fafafa;
+            max-width: 100%;
+        }
+
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .select-box, .btn {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .btn {
+            background: #409eff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #337ecc;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="title">全站 Spine 自动扫描播放器</h1>
+    <div class="controls">
+        <label>扫描到的动画：</label>
+        <select id="spineSelect" class="select-box"></select>
+        <button class="btn" onclick="loadSelected()">加载播放</button>
+    </div>
+
+    <div class="canvas-wrapper">
+        <canvas id="canvas"></canvas>
+        <div class="controls">
+            <button class="btn" onclick="play()">播放</button>
+            <button class="btn" onclick="pause()">暂停</button>
+            <button class="btn" onclick="stop()">停止</button>
+            <label>动作：</label>
+            <select id="animSelect" class="select-box"></select>
+            <label>缩放：</label>
+            <select id="scaleSelect" class="select-box">
+                <option value="0.5">0.5x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+            <label><input type="checkbox" id="loopCheck" checked> 循环</label>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/@esotericsoftware/spine-player@4.2.55/dist/iife/spine-player.js"></script>
+<script>
+let player;
+let spineList = [];
+
+// 启动
+window.onload = async () => {
+    await scanEntireSite();
+};
+
+// 递归扫描整个网站所有目录
+async function scanEntireSite(path = "/") {
+    try {
+        let files = await fetchFileList(path);
+        for (let f of files) {
+            if (f.isDirectory) {
+                await scanEntireSite(f.path);
+            } else {
+                detectSpineFile(f.path);
+            }
+        }
+    } catch (e) {}
+    refreshList();
+}
+
+// 自动识别 Spine 文件并配对
+function detectSpineFile(filePath) {
+    if (!filePath.match(/\.(json|skel|atlas)$/)) return;
+
+    let base = filePath.replace(/\.\w+$/, "");
+    let item = spineList.find(s => s.base === base);
+
+    if (!item) {
+        item = { base, json: null, atlas: null, name: formatName(base) };
+        spineList.push(item);
+    }
+
+    if (filePath.endsWith(".json") || filePath.endsWith(".skel")) item.json = filePath;
+    if (filePath.endsWith(".atlas")) item.atlas = filePath;
+}
+
+// 刷新下拉列表
+function refreshList() {
+    const sel = document.getElementById("spineSelect");
+    sel.innerHTML = "";
+    spineList.filter(s => s.json && s.atlas).forEach((s, i) => {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = s.name;
+        sel.appendChild(opt);
+    });
+}
+
+// 加载选中动画
+function loadSelected() {
+    const s = spineList[document.getElementById("spineSelect").value];
+    if (!s || !s.json || !s.atlas) return;
+    if (player) player.dispose();
+
+    player = new spine.SpinePlayer("canvas", {
+        jsonUrl: s.json,
+        atlasUrl: s.atlas,
+        alpha: true,
+        backgroundColor: "#fafafa"
+    });
+
+    player.on("loaded", () => {
+        updateAnims();
+        play();
+    });
+}
+
+// 播放控制
+function updateAnims() {
+    const sel = document.getElementById("animSelect");
+    sel.innerHTML = "";
+    player.animationNames.forEach(a => {
+        const opt = document.createElement("option");
+        opt.value = a;
+        opt.textContent = a;
+        sel.appendChild(opt);
+    });
+}
+
+function play() {
+    if (!player) return;
+    const anim = document.getElementById("animSelect").value;
+    const loop = document.getElementById("loopCheck").checked;
+    player.setAnimation(anim, loop);
+}
+
+function pause() { if (player) player.paused = true; }
+function stop() { if (player) player.clearAnimation(); }
+
+document.getElementById("scaleSelect").onchange = () => {
+    if (player) player.scale = +document.getElementById("scaleSelect").value;
+};
+
+// 工具：获取目录列表
+async function fetchFileList(path) {
+    const res = await fetch(path);
+    const text = await res.text();
+    const doc = new DOMParser().parseFromString(text, "text/html");
+    const list = [];
+
+    doc.querySelectorAll("a").forEach(a => {
+        const href = a.getAttribute("href");
+        if (!href || href.includes("../")) return;
+        const full = path + href;
+        list.push({
+            path: full,
+            isDirectory: href.endsWith("/")
+        });
+    });
+    return list;
+}
+
+function formatName(p) {
+    return p.split("/").filter(Boolean).pop().replace(/\.\w+$/, "");
+}
+</script>
+</body>
+</html>
