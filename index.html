@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>仓库Spine全自动预览</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#1a1a1a;color:#eee;padding:20px;}
+#fileList{max-width:300px;float:left;overflow:auto;height:90vh;border-right:1px solid #444;padding-right:10px;}
+#preview{margin-left:320px;}
+.item{padding:8px 10px;margin:4px 0;background:#2d2d2d;cursor:pointer;border-radius:4px;}
+.item:hover{background:#444;}
+canvas{border:1px solid #333;}
+</style>
+</head>
+<body>
+<div id="fileList"></div>
+<div id="preview"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/spine-webplayer@4.2/dist/spine-player.min.js"></script>
+<script>
+// 仓库根目录API，改成你的用户名和仓库名
+const USER = "sou2670519569-ship-it";
+const REPO = "spine-";
+const BRANCH = "main";
+
+let listEl = document.getElementById("fileList");
+let previewEl = document.getElementById("preview");
+let rawBase = `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/`;
+let apiBase = `https://api.github.com/repos/${USER}/${REPO}/git/trees/${BRANCH}?recursive=1`;
+
+// 拉取仓库所有文件
+async function getAllFiles(){
+  let res = await fetch(apiBase);
+  let data = await res.json();
+  let files = data.tree.filter(item=>{
+    if(item.type !== "blob") return false;
+    let n = item.path.toLowerCase();
+    return n.endsWith(".json") || n.endsWith(".skel");
+  });
+  renderList(files);
+}
+
+// 渲染列表
+function renderList(files){
+  files.forEach(f=>{
+    let div = document.createElement("div");
+    div.className = "item";
+    div.innerText = f.path;
+    div.onclick = ()=>loadSpine(f.path);
+    listEl.appendChild(div);
+  });
+}
+
+// 加载并播放Spine
+function loadSpine(path){
+  previewEl.innerHTML = "";
+  let url = rawBase + encodeURIComponent(path);
+  new spine.SpinePlayer(previewEl, {
+    jsonUrl: url,
+    backgroundColor: "#111",
+    viewportControls: true,
+    animationControls: true
+  });
+}
+
+getAllFiles();
+</script>
+</body>
+</html>
