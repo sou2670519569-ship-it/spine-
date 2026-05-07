@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>我的 Spine 动画仓库预览 (Skel版)</title>
+    <!-- 引入 Spine 官方 Web 播放器 -->
+    <script src="https://unpkg.com/@esotericsoftware/spine-player@4.2.*/dist/iife/spine-player.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.2.*/dist/spine-player.css">
+    <style>
+        body { margin: 0; display: flex; height: 100vh; font-family: sans-serif; background: #222; color: white; }
+        #sidebar { width: 250px; background: #333; overflow-y: auto; border-right: 1px solid #444; }
+        #sidebar h3 { padding: 10px; margin: 0; background: #444; }
+        #file-list { list-style: none; padding: 0; margin: 0; }
+        #file-list li { padding: 10px; cursor: pointer; border-bottom: 1px solid #444; }
+        #file-list li:hover { background: #555; }
+        #player-container { flex-grow: 1; height: 100%; }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h3>动画列表</h3>
+        <ul id="file-list"><li>正在扫描文件...</li></ul>
+    </div>
+    <div id="player-container"></div>
+
+    <script>
+        // 配置你的 GitHub 仓库信息（请修改这里！）
+        const GITHUB_USER = 'sou2670519569-ship-it'; // 比如：sou2670519569-ship-it
+        const GITHUB_REPO = 'spine-';      // 比如：spine-
+        const GITHUB_BRANCH = 'main';          // 分支名，通常是 main 或 master
+
+        const fileList = document.getElementById('file-list');
+        let player = null;
+
+        // 1. 自动扫描仓库中的 .skel 文件
+        async function scanRepo() {
+            const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/git/trees/${GITHUB_BRANCH}?recursive=1`;
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                // 【修改点1】筛选出所有的 .skel 文件（Spine的二进制骨架文件）
+                const skelFiles = data.tree.filter(item => item.path.endsWith('.skel'));
+                
+                fileList.innerHTML = ''; // 清空列表
+                if (skelFiles.length === 0) {
+                    fileList.innerHTML = '<li>未找到 .skel 文件</li>';
+                    return;
+                }
+
+                // 2. 生成左侧播放列表
+                skelFiles.forEach(file => {
+                    const baseName = file.path.replace('.skel', '');
+                    const li = document.createElement('li');
+                    li.textContent = baseName;
+                    li.onclick = () => loadSpine(baseName);
+                    fileList.appendChild(li);
+                });
+
+                // 默认加载第一个动画
+                if (skelFiles.length > 0) {
+                    loadSpine(skelFiles[0].path.replace('.skel', ''));
+                }
+            } catch (error) {
+                fileList.innerHTML = '<li>扫描失败，请检查用户名和仓库名</li>';
+                console.error(error);
+            }
+        }
+
+        // 3. 加载并播放指定的 Spine 动画
+        function loadSpine(baseName) {
+            // 构建 GitHub Raw 文件的直链
+            const skelUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${baseName}.skel`;
+            const atlasUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${baseName}.atlas`;
+
+            // 销毁旧的播放器，创建新的
+            document.getElementById('player-container').innerHTML = '';
+            player = new spine.SpinePlayer("player-container", {
+                // 【修改点2】使用 skelUrl 替代 jsonUrl
+                skelUrl: skelUrl,
+                atlasUrl: atlasUrl,
+                backgroundColor: "#222",
+                alpha: true,
+                showControls: true
+            });
+        }
+
+        // 启动扫描
+        scanRepo();
+    </script>
+</body>
+</html>
