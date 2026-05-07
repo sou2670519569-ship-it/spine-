@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Spine 全自动播放器</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #111; color: white; font-family: Arial; }
+
+        /* 顶部动画列表 */
+        .toolbar {
+            background: #222;
+            padding: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .anim-btn {
+            padding: 9px 14px;
+            background: #333;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+        }
+        .anim-btn:hover {
+            background: #009FCC;
+        }
+        .anim-btn.active {
+            background: #007ACC;
+        }
+
+        /* 播放器区域 */
+        #player {
+            width: 100%;
+            height: calc(100vh - 64px);
+        }
+    </style>
+
+    <!-- 官方 Spine Web Player（稳定不报错）-->
+    <script src="https://unpkg.com/@esotericsoftware/spine-player@4.2/dist/iife/spine-player.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.2/dist/spine-player.min.css">
+</head>
+
+<body>
+    <div class="toolbar" id="toolbar"></div>
+    <div id="player"></div>
+
+    <script>
+        let currentPlayer = null;
+
+        // ==============================================
+        // 【全自动】扫描当前目录所有 Spine 动画
+        // ==============================================
+        async function autoScanSpineAnimations() {
+            const response = await fetch(window.location.origin + window.location.pathname);
+            const text = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, "text/html");
+
+            const animationSet = new Set();
+
+            // 自动找所有 .json / .skel 文件
+            const links = doc.querySelectorAll("a");
+            links.forEach(link => {
+                const name = link.textContent.trim();
+                if (name.endsWith(".json") || name.endsWith(".skel")) {
+                    const baseName = name.replace(/\.(json|skel)$/, "");
+                    animationSet.add(baseName);
+                }
+            });
+
+            return Array.from(animationSet);
+        }
+
+        // ==============================================
+        // 生成动画按钮
+        // ==============================================
+        function buildUI(animations) {
+            const bar = document.getElementById("toolbar");
+            bar.innerHTML = "";
+
+            animations.forEach((name, index) => {
+                const btn = document.createElement("button");
+                btn.className = "anim-btn" + (index === 0 ? " active" : "");
+                btn.textContent = name;
+                btn.onclick = () => {
+                    document.querySelectorAll(".anim-btn").forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    playAnimation(name);
+                };
+                bar.appendChild(btn);
+            });
+
+            if (animations.length > 0) {
+                playAnimation(animations[0]);
+            }
+        }
+
+        // ==============================================
+        // 播放动画（官方标准加载）
+        // ==============================================
+        function playAnimation(name) {
+            if (currentPlayer) currentPlayer.dispose();
+
+            currentPlayer = new spine.SpinePlayer("player", {
+                skeleton: `${name}.json`,
+                atlas: `${name}.atlas`,
+                autoplay: true,
+                loop: true,
+                showControls: true,
+                backgroundColor: "#111"
+            });
+        }
+
+        // ==============================================
+        // 启动！
+        // ==============================================
+        (async () => {
+            const animations = await autoScanSpineAnimations();
+            buildUI(animations);
+        })();
+    </script>
+</body>
+</html>
