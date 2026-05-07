@@ -1,0 +1,249 @@
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spine Viewer</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      background: #111;
+      color: white;
+      font-family: Arial;
+    }
+
+    #sidebar {
+      width: 300px;
+      background: #1a1a1a;
+      border-right: 1px solid #333;
+      overflow-y: auto;
+    }
+
+    #title {
+      padding: 20px;
+      font-size: 22px;
+      font-weight: bold;
+      border-bottom: 1px solid #333;
+    }
+
+    .item {
+      padding: 14px 18px;
+      border-bottom: 1px solid #2a2a2a;
+      cursor: pointer;
+    }
+
+    .item:hover {
+      background: #2a2a2a;
+    }
+
+    #viewer {
+      flex: 1;
+      height: 100%;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .loading {
+      padding: 20px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+<div id="sidebar">
+  <div id="title">Spine Assets</div>
+  <div id="list" class="loading">Loading...</div>
+</div>
+
+<div id="viewer"></div>
+
+<script>
+
+const OWNER = 'sou2670519569-ship-it'
+const REPO = 'spine-'
+const BRANCH = 'main'
+
+const API =
+`https://api.github.com/repos/${OWNER}/${REPO}/git/trees/${BRANCH}?recursive=1`
+
+const RAW =
+`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}`
+
+async function scanAssets() {
+
+  const res = await fetch(API)
+  const data = await res.json()
+
+  const files = data.tree || []
+
+  const folders = {}
+
+  for (const file of files) {
+
+    const path = file.path
+
+    if (!path.includes('/')) continue
+
+    const parts = path.split('/')
+
+    const folder = parts.slice(0, -1).join('/')
+
+    const filename = parts[parts.length - 1]
+
+    if (!folders[folder]) {
+      folders[folder] = []
+    }
+
+    folders[folder].push(filename)
+  }
+
+  const result = []
+
+  for (const folder in folders) {
+
+    const list = folders[folder]
+
+    const atlas = list.find(v => v.endsWith('.atlas'))
+    const json = list.find(v => v.endsWith('.json'))
+    const skel = list.find(v => v.endsWith('.skel'))
+
+    if (!atlas) continue
+    if (!json && !skel) continue
+
+    const spineFile = json || skel
+
+    let version = '4.1'
+
+    if (json) {
+
+      try {
+
+        const jsonUrl =
+          `${RAW}/${folder}/${spineFile}`
+
+        const r = await fetch(jsonUrl)
+
+        const d = await r.json()
+
+        version = d.skeleton.spine || '4.1'
+
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
+    result.push({
+      name: folder.split('/').pop(),
+      folder,
+      version,
+      spine:
+        `${RAW}/${folder}/${spineFile}`,
+      atlas:
+        `${RAW}/${folder}/${atlas}`
+    })
+  }
+
+  return result
+}
+
+function getPlayer(version) {
+
+  if (version.startsWith('3.8')) {
+    return 'player38.html'
+  }
+
+  if (version.startsWith('4.0')) {
+    return 'player40.html'
+  }
+
+  if (version.startsWith('4.1')) {
+    return 'player41.html'
+  }
+
+  if (version.startsWith('4.2')) {
+    return 'player42.html'
+  }
+
+  return 'player41.html'
+}
+
+function play(asset) {
+
+  const viewer =
+    document.getElementById('viewer')
+
+  const player =
+    getPlayer(asset.version)
+
+  viewer.innerHTML = `
+    <iframe
+      src="${player}
+      ?spine=${encodeURIComponent(asset.spine)}
+      &atlas=${encodeURIComponent(asset.atlas)}">
+    </iframe>
+  `
+}
+
+function render(assets) {
+
+  const list =
+    document.getElementById('list')
+
+  if (assets.length === 0) {
+
+    list.innerHTML = 'No Spine Found'
+
+    return
+  }
+
+  list.innerHTML = ''
+
+  assets.forEach(asset => {
+
+    const div = document.createElement('div')
+
+    div.className = 'item'
+
+    div.innerHTML = `
+      <div>${asset.name}</div>
+      <small>${asset.version}</small>
+    `
+
+    div.onclick = () => play(asset)
+
+    list.appendChild(div)
+  })
+
+  play(assets[0])
+}
+
+async function init() {
+
+  const assets = await scanAssets()
+
+  render(assets)
+}
+
+init()
+
+</script>
+
+</body>
+</html>
+```
