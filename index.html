@@ -1,71 +1,132 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>仓库Spine全自动预览</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Spine 仓库全文件自动预览播放器</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:#1a1a1a;color:#eee;padding:20px;}
-#fileList{max-width:300px;float:left;overflow:auto;height:90vh;border-right:1px solid #444;padding-right:10px;}
-#preview{margin-left:320px;}
-.item{padding:8px 10px;margin:4px 0;background:#2d2d2d;cursor:pointer;border-radius:4px;}
-.item:hover{background:#444;}
-canvas{border:1px solid #333;}
+* {margin:0;padding:0;box-sizing:border-box;}
+body {background:#121212;color:#e5e5e5;font-family:system-ui;}
+#sidebar {
+  width: 340px;
+  height: 100vh;
+  position: fixed;
+  left:0;top:0;
+  background:#1e1e1e;
+  border-right:1px solid #333;
+  overflow-y:auto;
+  padding:16px;
+}
+#main {margin-left:340px;height:110vh;}
+.title {font-size:18px;font-weight:bold;margin-bottom:16px;color:#4299e1;}
+.item {
+  padding:10px 12px;
+  margin:6px 0;
+  background:#2a2a2a;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:13px;
+  word-break:break-all;
+  transition:0.2s;
+}
+.item:hover {background:#383838;}
+.item.active {background:#2b4a70;}
+.loading {color:#888;padding:20px;}
 </style>
 </head>
 <body>
-<div id="fileList"></div>
-<div id="preview"></div>
+
+<div id="sidebar">
+  <div class="title">📁 全部 Spine 动画列表</div>
+  <div id="listWrap" class="loading">正在遍历仓库所有文件...</div>
+</div>
+<div id="main"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/spine-webplayer@4.2/dist/spine-player.min.js"></script>
 <script>
-// 仓库根目录API，改成你的用户名和仓库名
-const USER = "sou2670519569-ship-it";
-const REPO = "spine-";
-const BRANCH = "main";
+// 已自动适配你的仓库
+const CONFIG = {
+  user: "sou2670519569-ship-it",
+  repo: "spine-",
+  branch: "main"
+};
 
-let listEl = document.getElementById("fileList");
-let previewEl = document.getElementById("preview");
-let rawBase = `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/`;
-let apiBase = `https://api.github.com/repos/${USER}/${REPO}/git/trees/${BRANCH}?recursive=1`;
+const listWrap = document.getElementById('listWrap');
+const mainWrap = document.getElementById('main');
+const rawPrefix = `https://raw.githubusercontent.com/${CONFIG.user}/${CONFIG.repo}/${CONFIG.branch}/`;
+const apiUrl = `https://api.github.com/repos/${CONFIG.user}/${CONFIG.repo}/git/trees/${BRANCH}?recursive=1`;
 
-// 拉取仓库所有文件
-async function getAllFiles(){
-  let res = await fetch(apiBase);
-  let data = await res.json();
-  let files = data.tree.filter(item=>{
-    if(item.type !== "blob") return false;
-    let n = item.path.toLowerCase();
-    return n.endsWith(".json") || n.endsWith(".skel");
-  });
-  renderList(files);
+// 获取所有文件
+let allFiles = [];
+let spineList = [];
+
+async function loadAllFiles() {
+  try {
+    const res = await fetch(`https://api.github.com/repos/${CONFIG.user}/${CONFIG.repo}/git/trees/${CONFIG.branch}?recursive=1`);
+    const data = await res.json();
+    allFiles = data.tree || [];
+    findSpineFiles();
+  } catch (e) {
+    listWrap.innerText = "加载失败";
+  }
 }
 
-// 渲染列表
-function renderList(files){
-  files.forEach(f=>{
-    let div = document.createElement("div");
-    div.className = "item";
-    div.innerText = f.path;
-    div.onclick = ()=>loadSpine(f.path);
-    listEl.appendChild(div);
+function findSpineFiles() {
+  spineList = allFiles.filter(f => {
+    const p = f.path.toLowerCase();
+    return p.endsWith(".json") || p.endsWith(".skel");
+  });
+
+  if (spineList.length === 0) {
+    listWrap.innerText = "未找到任何 Spine 动画";
+    return;
+  }
+
+  listWrap.className = "";
+  listWrap.innerHTML = "";
+
+  spineList.forEach(file => {
+    const el = document.createElement("div");
+    el.className = "item";
+    el.innerText = file.path;
+    el.onclick = () => play(file.path);
+    listWrap.appendChild(el);
   });
 }
 
-// 加载并播放Spine
-function loadSpine(path){
-  previewEl.innerHTML = "";
-  let url = rawBase + encodeURIComponent(path);
-  new spine.SpinePlayer(previewEl, {
-    jsonUrl: url,
-    backgroundColor: "#111",
-    viewportControls: true,
-    animationControls: true
-  });
+function play(jsonPath) {
+  mainWrap.innerHTML = "<div style='padding:20px'>加载中...</div>";
+
+  document.querySelectorAll(".item").forEach(i => i.classList.remove("active"));
+  event ? event.target.classList.add("active") : null;
+
+  const base = jsonPath.replace(/\.(json|skel)$/, "");
+  const atlasPath = base + ".atlas";
+
+  const jsonUrl = rawPrefix + encodeURIComponent(jsonPath);
+  const atlasUrl = rawPrefix + encodeURIComponent(atlasPath);
+
+  mainWrap.innerHTML = "";
+
+  try {
+    new spine.SpinePlayer(mainWrap, {
+      jsonUrl: jsonUrl,
+      atlasUrl: atlasUrl,
+      backgroundColor: "#111",
+      animation: "walk",
+      defaultMix: 0.2,
+      viewport: {
+        debug: false,
+        controls: true
+      },
+      animationControls: true
+    });
+  } catch (e) {
+    mainWrap.innerText = "播放失败：版本不兼容或缺少图集";
+  }
 }
 
-getAllFiles();
+loadAllFiles();
 </script>
 </body>
 </html>
