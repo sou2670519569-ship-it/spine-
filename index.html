@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>自动 Spine 动画播放器</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #1a1a1a; color: white; padding: 20px; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .container { display: flex; gap: 20px; max-width: 1400px; margin: 0 auto; }
+        .anim-list { width: 280px; background: #2a2a2a; padding: 15px; border-radius: 8px; height: fit-content; max-height: 700px; overflow-y: auto; }
+        .anim-item { padding: 10px 12px; margin: 6px 0; background: #333; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .anim-item:hover { background: #444; }
+        .anim-item.active { background: #007cdd; }
+        .player-area { flex: 1; }
+        #canvas { width: 100%; height: 700px; background: #222; border-radius: 8px; }
+        .loading { text-align: center; padding: 30px; color: #aaa; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎬 自动加载 GitHub Spine 动画</h1>
+        <p>自动扫描 | 自动匹配版本 | 无需修改代码</p>
+    </div>
+
+    <div class="container">
+        <div class="anim-list" id="list"></div>
+        <div class="player-area">
+            <div id="loading" class="loading">加载中...</div>
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // ==============================================
+        // 自动配置：自动获取 GitHub 仓库地址
+        // ==============================================
+        const getRepoUrl = () => {
+            const href = window.location.href;
+            if (href.includes('github.io')) {
+                const parts = href.split('/');
+                return `${parts[0]}//${parts[2]}/${parts[3]}`;
+            }
+            return 'https://你的用户名.github.io/你的仓库名';
+        };
+
+        const BASE_URL = getRepoUrl();
+        let currentPlayer = null;
+
+        // ==============================================
+        // Spine 版本自动映射
+        // ==============================================
+        const SPINE_VERSIONS = {
+            '3.8': { js: 'https://esotericsoftware.com/files/play/web/3.8/spine-player.min.js', css: 'https://esotericsoftware.com/files/play/web/3.8/spine-player.min.css' },
+            '4.0': { js: 'https://esotericsoftware.com/files/play/web/4.0/spine-player.min.js', css: 'https://esotericsoftware.com/files/play/web/4.0/spine-player.min.css' },
+            '4.1': { js: 'https://esotericsoftware.com/files/play/web/4.1/spine-player.min.js', css: 'https://esotericsoftware.com/files/play/web/4.1/spine-player.min.css' },
+            '4.2': { js: 'https://esotericsoftware.com/files/play/web/4.2/spine-player.min.js', css: 'https://esotericsoftware.com/files/play/web/4.2/spine-player.min.css' }
+        };
+
+        // ==============================================
+        // 1. 自动扫描仓库所有 Spine 动画
+        // ==============================================
+        async function scanSpineFiles() {
+            const files = [];
+            try {
+                const res = await fetch(BASE_URL);
+                const text = await res.text();
+                const dom = new DOMParser().parseFromString(text, 'text/html');
+
+                dom.querySelectorAll('a').forEach(a => {
+                    const name = a.textContent.trim();
+                    if (name.endsWith('.json') || name.endsWith('.skel')) {
+                        const base = name.replace(/\.(json|skel)$/, '');
+                        files.push({ base, file: name });
+                    }
+                });
+            } catch (e) {
+                document.getElementById('loading').innerText = '加载失败';
+            }
+
+            if (files.length === 0) {
+                document.getElementById('loading').innerText = '未找到 Spine 动画';
+                return;
+            }
+
+            renderList(files);
+            playAnimation(files[0]);
+        }
+
+        // ==============================================
+        // 2. 渲染动画列表
+        // ==============================================
+        function renderList(files) {
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            document.getElementById('loading').style.display = 'none';
+
+            files.forEach((anim, idx) => {
+                const div = document.createElement('div');
+                div.className = 'anim-item' + (idx === 0 ? ' active' : '');
+                div.innerText = anim.base;
+                div.onclick = () => {
+                    document.querySelectorAll('.anim-item').forEach(i => i.classList.remove('active'));
+                    div.classList.add('active');
+                    playAnimation(anim);
+                };
+                list.appendChild(div);
+            });
+        }
+
+        // ==============================================
+        // 3. 自动检测版本 + 加载播放器 + 播放动画
+        // ==============================================
+        async function playAnimation(anim) {
+            if (currentPlayer) currentPlayer.dispose();
+            document.getElementById('loading').innerText = '正在加载动画...';
+            document.getElementById('loading').style.display = 'block';
+
+            const jsonUrl = `${BASE_URL}/${anim.base}.json`;
+            const skelUrl = `${BASE_URL}/${anim.base}.skel`;
+            const atlasUrl = `${BASE_URL}/${anim.base}.atlas`;
+
+            // 自动检测版本
+            const version = await detectSpineVersion(jsonUrl, skelUrl);
+            await loadSpinePlayer(version);
+
+            // 播放
+            currentPlayer = new spine.SpinePlayer('canvas', {
+                jsonUrl: anim.file.endsWith('.json') ? jsonUrl : null,
+                skelUrl: anim.file.endsWith('.skel') ? skelUrl : null,
+                atlasUrl: atlasUrl,
+                alpha: true,
+                premultipliedAlpha: true,
+                showControls: true,
+                loop: true,
+                autoplay: true
+            });
+
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // ==============================================
+        // 4. 自动检测 Spine 版本
+        // ==============================================
+        async function detectSpineVersion(jsonUrl, skelUrl) {
+            try {
+                const res = await fetch(jsonUrl);
+                if (!res.ok) return '4.2';
+                const json = await res.json();
+                const v = json.skeleton?.spine || '4.2';
+
+                if (v.startsWith('3.8')) return '3.8';
+                if (v.startsWith('4.0')) return '4.0';
+                if (v.startsWith('4.1')) return '4.1';
+                return '4.2';
+            } catch (e) {
+                return '4.2';
+            }
+        }
+
+        // ==============================================
+        // 5. 动态加载对应版本播放器
+        // ==============================================
+        function loadSpinePlayer(version) {
+            return new Promise(resolve => {
+                const ver = SPINE_VERSIONS[version] || SPINE_VERSIONS['4.2'];
+
+                // CSS
+                if (!document.querySelector(`link[href="${ver.css}"]`)) {
+                    const css = document.createElement('link');
+                    css.rel = 'stylesheet';
+                    css.href = ver.css;
+                    document.head.appendChild(css);
+                }
+
+                // JS
+                if (document.querySelector(`script[src="${ver.js}"]`)) {
+                    resolve();
+                    return;
+                }
+
+                const script = document.createElement('script');
+                script.src = ver.js;
+                script.onload = resolve;
+                document.body.appendChild(script);
+            });
+        }
+
+        // 启动
+        window.onload = scanSpineFiles;
+    </script>
+</body>
+</html>
