@@ -2,34 +2,131 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Spine 在线播放</title>
-<link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.2/dist/spine-player.min.css">
-<script src="https://unpkg.com/@esotericsoftware/spine-player@4.2/dist/iife/spine-player.min.js"></script>
+<title>Spine 自动遍历播放</title>
+<link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.2.24/dist/spine-player.min.css">
+<script src="https://unpkg.com/@esotericsoftware/spine-player@4.2.24/dist/iife/spine-player.min.js"></script>
 <style>
-#player { width:800px; height:600px; margin:20px auto; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#000; }
+    #player { width:100vw; height:100vh; }
+    #status { 
+        position:fixed; top:10px; left:10px; color:#fff; 
+        background:rgba(0,0,0,0.5); padding:8px 12px;
+        font-size:14px; border-radius:6px;
+    }
 </style>
 </head>
 <body>
+<div id="status">正在扫描所有 Spine 文件夹...</div>
 <div id="player"></div>
 
 <script>
-// 播放 0000_1-1
-new spine.SpinePlayer("player", {
-  jsonUrl: "https://raw.githubusercontent.com/sou2670519569-ship-it/spine-/main/0000_1-1.json",
-  atlasUrl: "https://raw.githubusercontent.com/sou2670519569-ship-it/spine-/main/0000_1-1.atlas",
-  autoplay: true,
-  loop: true
-});
+// ==============================================
+// 配置：你的 GitHub Pages 地址（不用改）
+// ==============================================
+const BASE_URL = "https://sou2670519569-ship-it.github.io/spine-/";
 
-// 如需播放 c010_01，把上面注释，用下面这段：
-/*
-new spine.SpinePlayer("player", {
-  skelUrl: "https://raw.githubusercontent.com/sou2670519569-ship-it/spine-/main/c010_01.skel",
-  atlasUrl: "https://raw.githubusercontent.com/sou2670519569-ship-it/spine-/main/c010_01.atlas",
-  autoplay: true,
-  loop: true
-});
-*/
+// ==============================================
+// 自动扫描所有子文件夹（你所有的 Spine 目录）
+// ==============================================
+async function scanAllSpineFolders() {
+    const allAnimationList = [];
+
+    // 1. 读取仓库根目录文件列表
+    const rootResponse = await fetch(BASE_URL);
+    const rootText = await rootResponse.text();
+
+    // 2. 提取所有文件夹
+    const folderRegex = /href="([^"]+)\/"/g;
+    let match;
+    while ((match = folderRegex.exec(rootText)) !== null) {
+        const folder = match[1];
+        if (folder && !folder.includes(".") && !folder.includes("..")) {
+            try {
+                const res = await fetch(BASE_URL + folder + "/");
+                const text = await res.text();
+
+                // 3. 判断文件夹里是否有 Spine 文件
+                const hasJson = /\.json/i.test(text);
+                const hasSkel = /\.skel/i.test(text);
+                const hasAtlas = /\.atlas/i.test(text);
+
+                if ((hasJson || hasSkel) && hasAtlas) {
+                    allAnimationList.push(folder);
+                }
+            } catch (e) {}
+        }
+    }
+
+    console.log("✅ 自动找到所有 Spine 文件夹：", allAnimationList);
+    document.getElementById("status").innerText = 
+        `找到 ${allAnimationList.length} 个 Spine 动画，开始自动播放`;
+
+    return allAnimationList;
+}
+
+// ==============================================
+// 播放单个文件夹里的 Spine
+// ==============================================
+async function playSpineFolder(folder) {
+    return new Promise(async (resolve) => {
+        try {
+            document.getElementById("status").innerText = `正在播放：${folder}`;
+
+            // 自动判断是 json 还是 skel
+            const jsonFile = `${BASE_URL}${folder}/${folder}.json`;
+            const skelFile = `${BASE_URL}${folder}/${folder}.skel`;
+            const atlasFile = `${BASE_URL}${folder}/${folder}.atlas`;
+
+ config = {
+                atlasUrl: atlasFile,
+                autoplay: true,
+                loop: true,
+                backgroundColor: "#000",
+                viewportBackgroundColor: "#000",
+                success: () => {
+                    setTimeout(() => {
+                        resolve();
+                    }, 5000); // 每个动画播放 5 秒
+                },
+                error: () => resolve()
+            };
+
+            // 优先用 json
+            const jsonCheck = await fetch(jsonFile);
+            if (jsonCheck.ok) {
+                config.jsonUrl = jsonFile;
+            } else {
+                config.skelUrl = skelFile;
+            }
+
+            new spine.SpinePlayer("player", config);
+        } catch (e) {
+            resolve();
+        }
+    });
+}
+
+// ==============================================
+// 自动轮播所有 Spine
+// ==============================================
+async function autoPlayAll() {
+    const folders = await scanAllSpineFolders();
+    if (folders.length === 0) {
+        document.getElementById("status").innerText = "❌ 没有找到任何 Spine 动画";
+        return;
+    }
+
+    // 循环播放
+    while (true) {
+        for (const folder of folders) {
+            await playSpineFolder(folder);
+        }
+    }
+}
+
+// 启动！
+autoPlayAll();
 </script>
 </body>
 </html>
