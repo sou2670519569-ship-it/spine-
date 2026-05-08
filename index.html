@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Spine 动画在线预览</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #222;
+      color: #eee;
+      font-family: sans-serif;
+    }
+    #player {
+      width: 100vw;
+      height: 80vh;
+    }
+    select, button {
+      margin: 8px;
+      padding: 6px 12px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">🎬 Spine 动画在线预览</h2>
+
+<div style="text-align:center;">
+  <label>选择动画：</label>
+  <select id="animSelect"></select>
+  <button onclick="playAnim()">播放</button>
+</div>
+
+<div id="player"></div>
+
+<!-- Spine Player（4.1 示例，版本要和你导出的一致） -->
+<script src="https://unpkg.com/@esotericsoftware/spine-player@4.1/dist/spine-player.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.1/dist/spine-player.css">
+
+<script>
+  const player = new spine.SpinePlayer("player", {
+    skeleton: "c010_01.skel",
+    atlas: "c010_01.atlas",
+    animation: "animation",
+    backgroundColor: "#222222",
+    alpha: true,
+    premultipliedAlpha: false,
+    preserveDrawingBuffer: false,
+    success: function (player) {
+      player.play();
+    }
+  });
+
+  // 简单示例：列出动画名（需要 Spine Player 内部 API）
+  setTimeout(() => {
+    const select = document.getElementById("animSelect");
+    if (player.skeleton && player.skeleton.data.animations) {
+      player.skeleton.data.animations.forEach(a => {
+        const opt = document.createElement("option");
+        opt.value = a.name;
+        opt.text = a.name;
+        select.appendChild(opt);
+      });
+    }
+  }, 1000);
+
+  function playAnim() {
+    const name = document.getElementById("animSelect").value;
+    player.setAnimation(name, true);
+  }
+</script>
+
+</body>
+</html>
