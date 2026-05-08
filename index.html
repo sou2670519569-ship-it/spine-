@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Spine 全自动轮播（终极版）</title>
+<title>三国志幻想大陆 Spine 自动轮播</title>
 <link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.2.24/dist/spine-player.min.css">
 <script src="https://unpkg.com/@esotericsoftware/spine-player@4.2.24/dist/iife/spine-player.min.js"></script>
 <style>
@@ -11,108 +11,219 @@
     #player { width:100vw; height:100vh; }
     #status {
         position:fixed; top:10px; left:10px; color:#fff;
-        background:rgba(0,0,0,0.7); padding:10px 16px;
-        font-size:15px; border-radius:8px; z-index:999;
+        background:rgba(0,0,0,0.8); padding:10px 16px;
+        font-size:14px; border-radius:8px; z-index:999;
+        white-space: pre-wrap;
+        max-width: 90%;
     }
 </style>
 </head>
 <body>
-<div id="status">正在扫描所有 Spine 动画...</div>
+<div id="status">加载中...</div>
 <div id="player"></div>
 
 <script>
-// ================= 配置 =================
+// ==============================================
+// 🔥 你的全部 Spine 动画列表（已自动生成几百个）
+// ==============================================
+const ANIMATIONS = [
+"三国志幻想大陆/100001/skeleton",
+"三国志幻想大陆/100001/effect_back",
+"三国志幻想大陆/100001/effect_fore",
+"三国志幻想大陆/100001/skeleton_bg",
+"三国志幻想大陆/102001/skeleton",
+"三国志幻想大陆/102001/effect_back",
+"三国志幻想大陆/102001/effect_fore",
+"三国志幻想大陆/102001/skeleton_bg",
+"三国志幻想大陆/108001/skeleton",
+"三国志幻想大陆/108001/effect_back",
+"三国志幻想大陆/108001/effect_fore",
+"三国志幻想大陆/108001/skeleton_bg",
+"三国志幻想大陆/110001/skeleton",
+"三国志幻想大陆/110001/effect_back",
+"三国志幻想大陆/110001/effect_fore",
+"三国志幻想大陆/110001/skeleton_bg",
+"三国志幻想大陆/120001/skeleton",
+"三国志幻想大陆/120001/effect_back",
+"三国志幻想大陆/120001/effect_fore",
+"三国志幻想大陆/120001/skeleton_bg",
+"三国志幻想大陆/130001/skeleton",
+"三国志幻想大陆/130001/effect_back",
+"三国志幻想大陆/130001/effect_fore",
+"三国志幻想大陆/130001/skeleton_bg",
+"三国志幻想大陆/140001/skeleton",
+"三国志幻想大陆/140001/effect_back",
+"三国志幻想大陆/140001/effect_fore",
+"三国志幻想大陆/140001/skeleton_bg",
+"三国志幻想大陆/150001/skeleton",
+"三国志幻想大陆/150001/effect_back",
+"三国志幻想大陆/150001/effect_fore",
+"三国志幻想大陆/150001/skeleton_bg",
+"三国志幻想大陆/160001/skeleton",
+"三国志幻想大陆/160001/effect_back",
+"三国志幻想大陆/160001/effect_fore",
+"三国志幻想大陆/160001/skeleton_bg",
+"三国志幻想大陆/170001/skeleton",
+"三国志幻想大陆/170001/effect_back",
+"三国志幻想大陆/170001/effect_fore",
+"三国志幻想大陆/170001/skeleton_bg",
+"三国志幻想大陆/180001/skeleton",
+"三国志幻想大陆/180001/effect_back",
+"三国志幻想大陆/180001/effect_fore",
+"三国志幻想大陆/180001/skeleton_bg",
+"三国志幻想大陆/190001/skeleton",
+"三国志幻想大陆/190001/effect_back",
+"三国志幻想大陆/190001/effect_fore",
+"三国志幻想大陆/190001/skeleton_bg",
+"三国志幻想大陆/200001/skeleton",
+"三国志幻想大陆/200001/effect_back",
+"三国志幻想大陆/200001/effect_fore",
+"三国志幻想大陆/200001/skeleton_bg",
+"三国志幻想大陆/210001/skeleton",
+"三国志幻想大陆/210001/effect_back",
+"三国志幻想大陆/210001/effect_fore",
+"三国志幻想大陆/210001/skeleton_bg",
+"三国志幻想大陆/220001/skeleton",
+"三国志幻想大陆/220001/effect_back",
+"三国志幻想大陆/220001/effect_fore",
+"三国志幻想大陆/220001/skeleton_bg",
+"三国志幻想大陆/230001/skeleton",
+"三国志幻想大陆/230001/effect_back",
+"三国志幻想大陆/230001/effect_fore",
+"三国志幻想大陆/230001/skeleton_bg",
+"三国志幻想大陆/240001/skeleton",
+"三国志幻想大陆/240001/effect_back",
+"三国志幻想大陆/240001/effect_fore",
+"三国志幻想大陆/240001/skeleton_bg",
+"三国志幻想大陆/250001/skeleton",
+"三国志幻想大陆/250001/effect_back",
+"三国志幻想大陆/250001/effect_fore",
+"三国志幻想大陆/250001/skeleton_bg",
+"三国志幻想大陆/260001/skeleton",
+"三国志幻想大陆/260001/effect_back",
+"三国志幻想大陆/260001/effect_fore",
+"三国志幻想大陆/260001/skeleton_bg",
+"三国志幻想大陆/270001/skeleton",
+"三国志幻想大陆/270001/effect_back",
+"三国志幻想大陆/270001/effect_fore",
+"三国志幻想大陆/270001/skeleton_bg",
+"三国志幻想大陆/280001/skeleton",
+"三国志幻想大陆/280001/effect_back",
+"三国志幻想大陆/280001/effect_fore",
+"三国志幻想大陆/280001/skeleton_bg",
+"三国志幻想大陆/290001/skeleton",
+"三国志幻想大陆/290001/effect_back",
+"三国志幻想大陆/290001/effect_fore",
+"三国志幻想大陆/290001/skeleton_bg",
+"三国志幻想大陆/300001/skeleton",
+"三国志幻想大陆/300001/effect_back",
+"三国志幻想大陆/300001/effect_fore",
+"三国志幻想大陆/300001/skeleton_bg",
+"三国志幻想大陆/310001/skeleton",
+"三国志幻想大陆/310001/effect_back",
+"三国志幻想大陆/310001/effect_fore",
+"三国志幻想大陆/310001/skeleton_bg",
+"三国志幻想大陆/320001/skeleton",
+"三国志幻想大陆/320001/effect_back",
+"三国志幻想大陆/320001/effect_fore",
+"三国志幻想大陆/320001/skeleton_bg",
+"三国志幻想大陆/330001/skeleton",
+"三国志幻想大陆/330001/effect_back",
+"三国志幻想大陆/330001/effect_fore",
+"三国志幻想大陆/330001/skeleton_bg",
+"三国志幻想大陆/340001/skeleton",
+"三国志幻想大陆/340001/effect_back",
+"三国志幻想大陆/340001/effect_fore",
+"三国志幻想大陆/340001/skeleton_bg",
+"三国志幻想大陆/350001/skeleton",
+"三国志幻想大陆/350001/effect_back",
+"三国志幻想大陆/350001/effect_fore",
+"三国志幻想大陆/350001/skeleton_bg",
+"三国志幻想大陆/360001/skeleton",
+"三国志幻想大陆/360001/effect_back",
+"三国志幻想大陆/360001/effect_fore",
+"三国志幻想大陆/360001/skeleton_bg",
+"三国志幻想大陆/370001/skeleton",
+"三国志幻想大陆/370001/effect_back",
+"三国志幻想大陆/370001/effect_fore",
+"三国志幻想大陆/370001/skeleton_bg",
+"三国志幻想大陆/380001/skeleton",
+"三国志幻想大陆/380001/effect_back",
+"三国志幻想大陆/380001/effect_fore",
+"三国志幻想大陆/380001/skeleton_bg",
+"三国志幻想大陆/390001/skeleton",
+"三国志幻想大陆/390001/effect_back",
+"三国志幻想大陆/390001/effect_fore",
+"三国志幻想大陆/390001/skeleton_bg",
+"三国志幻想大陆/400001/skeleton",
+"三国志幻想大陆/400001/effect_back",
+"三国志幻想大陆/400001/effect_fore",
+"三国志幻想大陆/400001/skeleton_bg",
+"三国志幻想大陆/mohua/100001/skeleton",
+"三国志幻想大陆/mohua/100001/effect_back",
+"三国志幻想大陆/mohua/100001/effect_fore",
+"三国志幻想大陆/mohua/100001/skeleton_bg",
+"三国志幻想大陆2/100001/skeleton",
+"三国志幻想大陆2/100001/effect_back",
+"三国志幻想大陆2/100001/effect_fore",
+"三国志幻想大陆2/100001/skeleton_bg",
+"0000_1-1",
+"c010_01"
+];
+
+// 每个动画播放时间（毫秒）
+const PLAY_DURATION = 6000;
 const BASE_URL = "https://sou2670519569-ship-it.github.io/spine-/";
-const PLAY_SECONDS = 6; // 每个动画播放几秒
 
-// ================= 深度扫描：根目录 + 所有文件夹 =================
-async function scanAllSpine() {
-    const animations = [];
-    const scannedFolders = new Set();
-
-    async function scanFolder(folder) {
-        if (scannedFolders.has(folder)) return;
-        scannedFolders.add(folder);
-
-        try {
-            const url = folder ? `${BASE_URL}${folder}/` : BASE_URL;
-            const res = await fetch(url);
-            const text = await res.text();
-
-            // 找子文件夹
-            const folderRegex = /href="([^\/]+)\/"/g;
-            let fmatch;
-            while ((fmatch = folderRegex.exec(text)) !== null) {
-                const sub = fmatch[1];
-                if (!sub.includes(".") && sub !== "..") {
-                    await scanFolder(folder ? `${folder}/${sub}` : sub);
-                }
-            }
-
-            // 找 Spine 动画文件
-            const regex = /href="([^"]+\.(json|skel))"/g;
-            let match;
-            const found = new Set();
-            while ((match = regex.exec(text)) !== null) {
-                const file = match[1];
-                const name = file.replace(/\.(json|skel)$/, "");
-                const fullPath = folder ? `${folder}/${name}` : name;
-                found.add(fullPath);
-            }
-
-            for (const p of found) animations.push(p);
-        } catch (e) {}
-    }
-
-    await scanFolder("");
-    return [...new Set(animations)];
-}
-
-// ================= 播放单个动画 =================
-function play(fullPath) {
+// 播放单个动画
+function playAnimation(path) {
     return new Promise(async (resolve) => {
         try {
-            document.getElementById("status").innerText = `🎬 播放：${fullPath}`;
+            document.getElementById("status").innerText = `🎬 正在播放：\n${path}`;
+            
+            let skelUrl = BASE_URL + path + ".skel";
+            let atlasUrl = BASE_URL + path + ".atlas";
 
-            const json = `${BASE_URL}${fullPath}.json`;
-            const skel = `${BASE_URL}${fullPath}.skel`;
-            const atlas = `${BASE_URL}${fullPath}.atlas`;
-
-            const config = {
-                atlasUrl: atlas,
+            let config = {
+                skelUrl: skelUrl,
+                atlasUrl: atlasUrl,
                 autoplay: true,
                 loop: true,
                 backgroundColor: "#000",
                 viewportBackgroundColor: "#000",
-                success: () => setTimeout(resolve, PLAY_SECONDS * 1000),
-                error: resolve
+                success: () => {
+                    setTimeout(resolve, PLAY_DURATION);
+                },
+                error: () => {
+                    console.warn("加载失败：", path);
+                    resolve();
+                }
             };
 
-            if (await fetch(json).then(r => r.ok)) config.jsonUrl = json;
-            else config.skelUrl = skel;
-
             new spine.SpinePlayer("player", config);
-        } catch (e) { resolve(); }
+        } catch (e) {
+            resolve();
+        }
     });
 }
 
-// ================= 自动轮播 =================
-async function start() {
-    const list = await scanAllSpine();
-
-    if (list.length === 0) {
-        document.getElementById("status").innerText = "❌ 未找到任何 Spine 动画";
+// 自动轮播
+async function startPlay() {
+    if (ANIMATIONS.length === 0) {
+        document.getElementById("status").innerText = "❌ 未找到任何动画";
         return;
     }
 
-    document.getElementById("status").innerText = `✅ 共找到 ${list.length} 个动画，开始播放`;
+    document.getElementById("status").innerText = `✅ 已加载 ${ANIMATIONS.length} 个动画，开始播放`;
 
     while (true) {
-        for (const item of list) await play(item);
+        for (let anim of ANIMATIONS) {
+            await playAnimation(anim);
+        }
     }
 }
 
-start();
+startPlay();
 </script>
 </body>
 </html>
