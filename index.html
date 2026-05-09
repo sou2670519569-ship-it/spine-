@@ -1,102 +1,234 @@
 <!DOCTYPE html>
 <html lang="zh">
-
 <head>
+
 <meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1"
+/>
 
 <title>Spine Viewer</title>
 
 <script src="https://unpkg.com/@esotericsoftware/spine-player@4.2/dist/iife/spine-player.js"></script>
 
-<link rel="stylesheet"
-href="https://unpkg.com/@esotericsoftware/spine-player@4.2/dist/spine-player.css">
+<link
+rel="stylesheet"
+href="https://unpkg.com/@esotericsoftware/spine-player@4.2/dist/spine-player.css"
+/>
 
 <style>
 
 html,body{
+
     margin:0;
     width:100%;
     height:100%;
     overflow:hidden;
+
     background:#1e1e1e;
+
     color:white;
+
     font-family:sans-serif;
 }
 
+*{
+    box-sizing:border-box;
+}
+
 #app{
+
     display:flex;
+
     width:100%;
     height:100%;
 }
 
-#left{
-    width:260px;
+/********************************
+ * 左边
+ ********************************/
+
+#sidebar{
+
+    width:320px;
+
     background:#2b2b2b;
-    overflow-y:auto;
+
     border-right:1px solid #444;
+
+    display:flex;
+
+    flex-direction:column;
 }
 
-#right{
+#search{
+
+    height:50px;
+
+    border:none;
+
+    outline:none;
+
+    background:#1f1f1f;
+
+    color:white;
+
+    padding:0 15px;
+
+    font-size:14px;
+}
+
+#list{
+
     flex:1;
-    position:relative;
-}
 
-#player{
-    width:100%;
-    height:100%;
+    overflow:auto;
 }
 
 .item{
+
     padding:12px;
-    cursor:pointer;
+
     border-bottom:1px solid #3a3a3a;
+
+    cursor:pointer;
+
+    transition:.15s;
+
+    word-break:break-all;
 }
 
 .item:hover{
+
     background:#444;
 }
 
 .item.active{
+
     background:#666;
 }
 
-#topbar{
-    position:absolute;
-    top:10px;
-    left:10px;
-    z-index:999;
-    background:rgba(0,0,0,.5);
-    padding:10px;
-    border-radius:8px;
+/********************************
+ * 右边
+ ********************************/
+
+#main{
+
+    flex:1;
+
+    position:relative;
 }
 
-select{
-    padding:5px;
-    font-size:14px;
+#player{
+
+    width:100%;
+    height:100%;
+}
+
+/********************************
+ * 工具栏
+ ********************************/
+
+#toolbar{
+
+    position:absolute;
+
+    top:10px;
+    left:10px;
+
+    z-index:999;
+
+    background:rgba(0,0,0,.6);
+
+    border-radius:10px;
+
+    padding:10px;
+
+    display:flex;
+
+    gap:8px;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+}
+
+select,button{
+
+    height:34px;
+
+    border:none;
+
+    border-radius:6px;
+
+    padding:0 12px;
 }
 
 button{
-    margin-left:5px;
-    padding:5px 10px;
+
+    cursor:pointer;
+}
+
+/********************************
+ * 状态
+ ********************************/
+
+#status{
+
+    position:absolute;
+
+    right:10px;
+    top:10px;
+
+    z-index:999;
+
+    background:rgba(0,0,0,.5);
+
+    border-radius:8px;
+
+    padding:8px 12px;
+
+    font-size:12px;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div id="app">
 
-    <div id="left"></div>
+    <div id="sidebar">
 
-    <div id="right">
+        <input
+            id="search"
+            placeholder="搜索..."
+        >
 
-        <div id="topbar">
+        <div id="list"></div>
 
-            动画：
+    </div>
+
+    <div id="main">
+
+        <div id="toolbar">
+
+            <span>动画</span>
+
             <select id="animSelect"></select>
 
-            <button onclick="setAnimation()">播放</button>
+            <button onclick="playAnimation()">
+                播放
+            </button>
+
+        </div>
+
+        <div id="status">
+
+            初始化中...
 
         </div>
 
@@ -108,208 +240,273 @@ button{
 
 <script>
 
-/***********************
- *
- * 修改这里
- *
- ***********************/
+/****************************************
+ * 配置
+ ****************************************/
 
-const USER = "你的GitHub用户名";
-const REPO = "你的仓库名";
+const USER = "sou2670519569-ship-it";
+
+const REPO = "spine";
+
 const BRANCH = "main";
 
-/**********************/
-
-const API =
-`https://api.github.com/repos/${USER}/${REPO}/contents`;
+/****************************************/
 
 const RAW =
 `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}`;
 
-const left = document.getElementById("left");
+/****************************************/
 
-const animSelect = document.getElementById("animSelect");
+const listEl =
+document.getElementById("list");
+
+const statusEl =
+document.getElementById("status");
+
+const searchInput =
+document.getElementById("search");
+
+const animSelect =
+document.getElementById("animSelect");
+
+/****************************************/
+
+let allCharacters = [];
 
 let currentPlayer = null;
 
-let currentData = null;
+/****************************************
+ * 状态
+ ****************************************/
 
-/*********************************
- *
- * 读取仓库目录
- *
- *********************************/
+function setStatus(text){
 
-async function loadRepo(){
+    statusEl.innerText = text;
 
-    const res = await fetch(API);
-
-    const list = await res.json();
-
-    const folders = list.filter(v => v.type === "dir");
-
-    for(const folder of folders){
-
-        createItem(folder.name);
-    }
+    console.log(text);
 }
 
-/*********************************
- *
- * 创建左侧角色按钮
- *
- *********************************/
+/****************************************
+ * 搜索
+ ****************************************/
 
-function createItem(name){
+searchInput.oninput = ()=>{
 
-    const div = document.createElement("div");
+    renderList(searchInput.value);
+};
 
-    div.className = "item";
+/****************************************
+ * 初始化
+ ****************************************/
 
-    div.innerText = name;
+init();
 
-    div.onclick = () => {
-
-        document
-        .querySelectorAll(".item")
-        .forEach(v=>v.classList.remove("active"));
-
-        div.classList.add("active");
-
-        loadCharacter(name);
-    };
-
-    left.appendChild(div);
-}
-
-/*********************************
- *
- * 加载角色
- *
- *********************************/
-
-async function loadCharacter(folder){
+async function init(){
 
     try{
 
-        const url =
-        `${API}/${encodeURIComponent(folder)}`;
+        setStatus("读取 manifest...");
 
-        const res = await fetch(url);
+        const res =
+        await fetch("./manifest.json");
 
-        const files = await res.json();
+        allCharacters =
+        await res.json();
 
-        let jsonFile = null;
-        let skelFile = null;
-        let atlasFile = null;
+        console.log(allCharacters);
 
-        for(const f of files){
+        renderList();
 
-            if(f.name.endsWith(".json"))
-                jsonFile = f.name;
-
-            if(f.name.endsWith(".skel"))
-                skelFile = f.name;
-
-            if(f.name.endsWith(".atlas"))
-                atlasFile = f.name;
-        }
-
-        if(!atlasFile){
-
-            alert(folder + " 缺少 atlas");
-
-            return;
-        }
-
-        const base =
-        `${RAW}/${encodeURIComponent(folder)}`;
-
-        currentData = {
-            folder,
-            json: jsonFile,
-            skel: skelFile,
-            atlas: atlasFile
-        };
-
-        createPlayer(base);
+        setStatus(
+            `加载完成 ${allCharacters.length} 个角色`
+        );
 
     }catch(err){
 
         console.error(err);
 
-        alert("加载失败");
+        setStatus(
+            "manifest读取失败"
+        );
     }
 }
 
-/*********************************
- *
- * 创建播放器
- *
- *********************************/
+/****************************************
+ * 渲染列表
+ ****************************************/
 
-function createPlayer(base){
+function renderList(keyword=""){
 
-    document.getElementById("player").innerHTML = "";
+    listEl.innerHTML = "";
 
-    if(currentPlayer){
+    const lower =
+    keyword.toLowerCase();
 
-        try{
-            currentPlayer.dispose();
-        }catch(e){}
+    const filtered =
+    allCharacters.filter(v=>{
+
+        return (
+
+            v.name
+            .toLowerCase()
+            .includes(lower)
+
+            ||
+
+            v.path
+            .toLowerCase()
+            .includes(lower)
+        );
+    });
+
+    for(const item of filtered){
+
+        createItem(item);
     }
+}
 
-    const config = {
+/****************************************
+ * 创建项
+ ****************************************/
 
-        atlasUrl:
-        `${base}/${currentData.atlas}`,
+function createItem(data){
 
-        alpha:true,
+    const div =
+    document.createElement("div");
 
-        backgroundColor:"#1e1e1e",
+    div.className = "item";
 
-        premultipliedAlpha:false,
+    div.innerText =
+    `${data.path}/${data.name}`;
 
-        success:(player)=>{
+    div.onclick = ()=>{
 
-            currentPlayer = player;
+        document
+        .querySelectorAll(".item")
+        .forEach(v=>{
 
-            loadAnimations(player);
-        },
+            v.classList.remove("active");
+        });
 
-        error:(err)=>{
+        div.classList.add("active");
 
-            console.error(err);
-
-            alert("Spine加载失败");
-        }
+        loadCharacter(data);
     };
 
-    if(currentData.json){
-
-        config.jsonUrl =
-        `${base}/${currentData.json}`;
-    }
-
-    if(currentData.skel){
-
-        config.skelUrl =
-        `${base}/${currentData.skel}`;
-    }
-
-    new spine.SpinePlayer(
-        "player",
-        config
-    );
+    listEl.appendChild(div);
 }
 
-/*********************************
- *
- * 动画列表
- *
- *********************************/
+/****************************************
+ * 加载角色
+ ****************************************/
 
-function loadAnimations(player){
+function loadCharacter(data){
+
+    try{
+
+        setStatus(
+            `加载 ${data.name}`
+        );
+
+        if(currentPlayer){
+
+            try{
+                currentPlayer.dispose();
+            }catch(e){}
+        }
+
+        document
+        .getElementById("player")
+        .innerHTML = "";
+
+        const encodedPath =
+        data.path
+        .split("/")
+        .map(encodeURIComponent)
+        .join("/");
+
+        const base =
+        `${RAW}/${encodedPath}`;
+
+        const config = {
+
+            alpha:true,
+
+            backgroundColor:"#1e1e1e",
+
+            premultipliedAlpha:false,
+
+            success:(player)=>{
+
+                currentPlayer = player;
+
+                setupAnimations(player);
+
+                setStatus(
+                    `已加载 ${data.name}`
+                );
+            },
+
+            error:(err)=>{
+
+                console.error(err);
+
+                setStatus(
+                    `加载失败 ${data.name}`
+                );
+            }
+        };
+
+        /********************************
+         * atlas
+         ********************************/
+
+        if(data.atlas){
+
+            config.atlasUrl =
+            `${base}/${encodeURIComponent(data.atlas)}`;
+        }
+
+        /********************************
+         * json
+         ********************************/
+
+        if(data.json){
+
+            config.jsonUrl =
+            `${base}/${encodeURIComponent(data.json)}`;
+        }
+
+        /********************************
+         * skel
+         ********************************/
+
+        if(data.skel){
+
+            config.skelUrl =
+            `${base}/${encodeURIComponent(data.skel)}`;
+        }
+
+        console.log(config);
+
+        new spine.SpinePlayer(
+            "player",
+            config
+        );
+
+    }catch(err){
+
+        console.error(err);
+
+        setStatus("播放失败");
+    }
+}
+
+/****************************************
+ * 动画
+ ****************************************/
+
+function setupAnimations(player){
 
     animSelect.innerHTML = "";
 
@@ -321,9 +518,11 @@ function loadAnimations(player){
         const option =
         document.createElement("option");
 
-        option.value = anim.name;
+        option.value =
+        anim.name;
 
-        option.innerText = anim.name;
+        option.innerText =
+        anim.name;
 
         animSelect.appendChild(option);
     }
@@ -337,32 +536,20 @@ function loadAnimations(player){
     }
 }
 
-/*********************************
- *
- * 播放动画
- *
- *********************************/
+/****************************************
+ * 播放
+ ****************************************/
 
-function setAnimation(){
+function playAnimation(){
 
-    if(!currentPlayer) return;
-
-    const name =
-    animSelect.value;
+    if(!currentPlayer)
+        return;
 
     currentPlayer.setAnimation(
-        name,
+        animSelect.value,
         true
     );
 }
-
-/*********************************
- *
- * 启动
- *
- *********************************/
-
-loadRepo();
 
 </script>
 
