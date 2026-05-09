@@ -1,0 +1,1986 @@
+[
+  {
+    "name": "0000_1-1",
+    "path": "红尘问仙",
+    "json": "0000_1-1.json",
+    "skel": null,
+    "atlas": "0000_1-1.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "0000_4-6",
+    "path": "红尘问仙",
+    "json": "0000_4-6.json",
+    "skel": null,
+    "atlas": "0000_4-6.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "0000-6-1",
+    "path": "红尘问仙",
+    "json": "0000-6-1.json",
+    "skel": null,
+    "atlas": "0000-6-1.atlas",
+    "version": "4.2.40"
+  },
+  {
+    "name": "10000_3",
+    "path": "红尘问仙",
+    "json": "10000_3.json",
+    "skel": null,
+    "atlas": "10000_3.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "10000_4",
+    "path": "红尘问仙",
+    "json": "10000_4.json",
+    "skel": null,
+    "atlas": "10000_4.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "10003_3",
+    "path": "红尘问仙",
+    "json": "10003_3.json",
+    "skel": null,
+    "atlas": "10003_3.atlas",
+    "version": "4.2.40"
+  },
+  {
+    "name": "10004_3",
+    "path": "红尘问仙",
+    "json": "10004_3.json",
+    "skel": null,
+    "atlas": "10004_3.atlas",
+    "version": "4.2.38"
+  },
+  {
+    "name": "10004_4",
+    "path": "红尘问仙",
+    "json": "10004_4.json",
+    "skel": null,
+    "atlas": "10004_4.atlas",
+    "version": "4.2.40"
+  },
+  {
+    "name": "14001_3",
+    "path": "红尘问仙",
+    "json": "14001_3.json",
+    "skel": null,
+    "atlas": "14001_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "14001_4",
+    "path": "红尘问仙",
+    "json": "14001_4.json",
+    "skel": null,
+    "atlas": "14001_4.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "14002_3",
+    "path": "红尘问仙",
+    "json": "14002_3.json",
+    "skel": null,
+    "atlas": "14002_3.atlas",
+    "version": "4.2.38"
+  },
+  {
+    "name": "14002_4",
+    "path": "红尘问仙",
+    "json": "14002_4.json",
+    "skel": null,
+    "atlas": "14002_4.atlas",
+    "version": "4.2.38"
+  },
+  {
+    "name": "3000_3",
+    "path": "红尘问仙",
+    "json": "3000_3.json",
+    "skel": null,
+    "atlas": "3000_3.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "3000_4",
+    "path": "红尘问仙",
+    "json": "3000_4.json",
+    "skel": null,
+    "atlas": "3000_4.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "3003_3",
+    "path": "红尘问仙",
+    "json": "3003_3.json",
+    "skel": null,
+    "atlas": "3003_3.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "3004_3",
+    "path": "红尘问仙",
+    "json": "3004_3.json",
+    "skel": null,
+    "atlas": "3004_3.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "3004_4",
+    "path": "红尘问仙",
+    "json": "3004_4.json",
+    "skel": null,
+    "atlas": "3004_4.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "3005_3",
+    "path": "红尘问仙",
+    "json": "3005_3.json",
+    "skel": null,
+    "atlas": "3005_3.atlas",
+    "version": "4.2.40"
+  },
+  {
+    "name": "3005_4",
+    "path": "红尘问仙",
+    "json": "3005_4.json",
+    "skel": null,
+    "atlas": "3005_4.atlas",
+    "version": "4.2.40"
+  },
+  {
+    "name": "3006_3",
+    "path": "红尘问仙",
+    "json": "3006_3.json",
+    "skel": null,
+    "atlas": "3006_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "3006_4",
+    "path": "红尘问仙",
+    "json": "3006_4.json",
+    "skel": null,
+    "atlas": "3006_4.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "4000_3",
+    "path": "红尘问仙",
+    "json": "4000_3.json",
+    "skel": null,
+    "atlas": "4000_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "4000_4",
+    "path": "红尘问仙",
+    "json": "4000_4.json",
+    "skel": null,
+    "atlas": "4000_4.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "4003_3",
+    "path": "红尘问仙",
+    "json": "4003_3.json",
+    "skel": null,
+    "atlas": "4003_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "4004_3",
+    "path": "红尘问仙",
+    "json": "4004_3.json",
+    "skel": null,
+    "atlas": "4004_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "4004_4",
+    "path": "红尘问仙",
+    "json": "4004_4.json",
+    "skel": null,
+    "atlas": "4004_4.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "4005_3",
+    "path": "红尘问仙",
+    "json": "4005_3.json",
+    "skel": null,
+    "atlas": "4005_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "4005_4",
+    "path": "红尘问仙",
+    "json": "4005_4.json",
+    "skel": null,
+    "atlas": "4005_4.atlas",
+    "version": "4.2.40"
+  },
+  {
+    "name": "4006_3",
+    "path": "红尘问仙",
+    "json": "4006_3.json",
+    "skel": null,
+    "atlas": "4006_3.atlas",
+    "version": "4.2.40"
+  },
+  {
+    "name": "4006_4",
+    "path": "红尘问仙",
+    "json": "4006_4.json",
+    "skel": null,
+    "atlas": "4006_4.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "5000_3",
+    "path": "红尘问仙",
+    "json": "5000_3.json",
+    "skel": null,
+    "atlas": "5000_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "5000_4",
+    "path": "红尘问仙",
+    "json": "5000_4.json",
+    "skel": null,
+    "atlas": "5000_4.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "5003_3",
+    "path": "红尘问仙",
+    "json": "5003_3.json",
+    "skel": null,
+    "atlas": "5003_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "5004_3",
+    "path": "红尘问仙",
+    "json": "5004_3.json",
+    "skel": null,
+    "atlas": "5004_3.atlas",
+    "version": "4.2.38"
+  },
+  {
+    "name": "5004_4",
+    "path": "红尘问仙",
+    "json": "5004_4.json",
+    "skel": null,
+    "atlas": "5004_4.atlas",
+    "version": "4.2.38"
+  },
+  {
+    "name": "5005_3",
+    "path": "红尘问仙",
+    "json": "5005_3.json",
+    "skel": null,
+    "atlas": "5005_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "5005_4",
+    "path": "红尘问仙",
+    "json": "5005_4.json",
+    "skel": null,
+    "atlas": "5005_4.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "6000_3",
+    "path": "红尘问仙",
+    "json": "6000_3.json",
+    "skel": null,
+    "atlas": "6000_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "6000_4",
+    "path": "红尘问仙",
+    "json": "6000_4.json",
+    "skel": null,
+    "atlas": "6000_4.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "6003_3",
+    "path": "红尘问仙",
+    "json": "6003_3.json",
+    "skel": null,
+    "atlas": "6003_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "6004_3",
+    "path": "红尘问仙",
+    "json": "6004_3.json",
+    "skel": null,
+    "atlas": "6004_3.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "6004_4",
+    "path": "红尘问仙",
+    "json": "6004_4.json",
+    "skel": null,
+    "atlas": "6004_4.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "6005_2",
+    "path": "红尘问仙",
+    "json": "6005_2.json",
+    "skel": null,
+    "atlas": "6005_2.atlas",
+    "version": "4.2.38"
+  },
+  {
+    "name": "6005_4",
+    "path": "红尘问仙",
+    "json": "6005_4.json",
+    "skel": null,
+    "atlas": "6005_4.atlas",
+    "version": "4.2.38"
+  },
+  {
+    "name": "7000_1",
+    "path": "红尘问仙",
+    "json": "7000_1.json",
+    "skel": null,
+    "atlas": "7000_1.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "7000_2",
+    "path": "红尘问仙",
+    "json": "7000_2.json",
+    "skel": null,
+    "atlas": "7000_2.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "7003_3",
+    "path": "红尘问仙",
+    "json": "7003_3.json",
+    "skel": null,
+    "atlas": "7003_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "7004_3",
+    "path": "红尘问仙",
+    "json": "7004_3.json",
+    "skel": null,
+    "atlas": "7004_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "7004_4",
+    "path": "红尘问仙",
+    "json": "7004_4.json",
+    "skel": null,
+    "atlas": "7004_4.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "8000_1",
+    "path": "红尘问仙",
+    "json": "8000_1.json",
+    "skel": null,
+    "atlas": "8000_1.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "8000_2",
+    "path": "红尘问仙",
+    "json": "8000_2.json",
+    "skel": null,
+    "atlas": "8000_2.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "8003_3",
+    "path": "红尘问仙",
+    "json": "8003_3.json",
+    "skel": null,
+    "atlas": "8003_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "8004_3",
+    "path": "红尘问仙",
+    "json": "8004_3.json",
+    "skel": null,
+    "atlas": "8004_3.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "8004_4",
+    "path": "红尘问仙",
+    "json": "8004_4.json",
+    "skel": null,
+    "atlas": "8004_4.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "9000_3",
+    "path": "红尘问仙",
+    "json": "9000_3.json",
+    "skel": null,
+    "atlas": "9000_3.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "9000_4",
+    "path": "红尘问仙",
+    "json": "9000_4.json",
+    "skel": null,
+    "atlas": "9000_4.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "9003_3",
+    "path": "红尘问仙",
+    "json": "9003_3.json",
+    "skel": null,
+    "atlas": "9003_3.atlas",
+    "version": "4.2.42"
+  },
+  {
+    "name": "9004_3",
+    "path": "红尘问仙",
+    "json": "9004_3.json",
+    "skel": null,
+    "atlas": "9004_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "9004_4",
+    "path": "红尘问仙",
+    "json": "9004_4.json",
+    "skel": null,
+    "atlas": "9004_4.atlas",
+    "version": "4.2.36"
+  },
+  {
+    "name": "9005_3",
+    "path": "红尘问仙",
+    "json": "9005_3.json",
+    "skel": null,
+    "atlas": "9005_3.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "9005_4",
+    "path": "红尘问仙",
+    "json": "9005_4.json",
+    "skel": null,
+    "atlas": "9005_4.atlas",
+    "version": "4.2.33"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/100001",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/102001",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/10800",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/10801",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/10802",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/10803",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/10804",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/11500",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "effect_back",
+    "path": "三国志幻想大陆/11501",
+    "json": null,
+    "skel": "effect_back.skel",
+    "atlas": "effect_back.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/11501",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/11502",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/11503",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/11600",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/11601",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/11602",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12400",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12401",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12402",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12403",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12404",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12405",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12406",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12500",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12501",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12502",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12503",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12504",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12700",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12701",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12702",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/12703",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13100",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "effect_fore",
+    "path": "三国志幻想大陆/13101",
+    "json": null,
+    "skel": "effect_fore.skel",
+    "atlas": "effect_fore.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13101",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13102",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13700",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13701",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13702",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13703",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13704",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13800",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13801",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13802",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13803",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13804",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/13805",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/14300",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/14301",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/14302",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/14303",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/14400",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/14401",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/14402",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/14700",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/14701",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/14702",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/14800",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/14801",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/14802",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/15700",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/15701",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/15800",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/15801",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/16000",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/16001",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/16002",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/21000",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/21001",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/21002",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/21003",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/21004",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/30500",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/30501",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/30502",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/30503",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/30504",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31000",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31001",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31002",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31003",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31004",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31005",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31400",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31401",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31402",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31403",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31404",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31600",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31601",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31602",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31603",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31604",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31700",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31701",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31702",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31703",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31704",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31705",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31900",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31901",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/31902",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40300",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40301",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40302",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40303",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40304",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40400",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40401",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40402",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40403",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40404",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40500",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40501",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40502",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40503",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40504",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40505",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40600",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40601",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40602",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40603",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40700",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40701",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40702",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40703",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/40704",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/41101",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/41102",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/41103",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/41104",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/50400",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/50401",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/51100",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/51101",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/51600",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/51601",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/52000",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/52001",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/52100",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/52101",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/5250",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/52700",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/90201",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/90401",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/93001",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/94001",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/95001",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/97001",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/99001",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/99201",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/99401",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/99601",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/99801",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/mohua/13700",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/mohua/14400",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆/mohua/21000",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "3.6.52"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/100500",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/100501",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton_bg",
+    "path": "三国志幻想大陆2/100501",
+    "json": null,
+    "skel": "skeleton_bg.skel",
+    "atlas": "skeleton_bg.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/100600",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/100601",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/11101",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/200200",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/200300",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/200301",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton_bg",
+    "path": "三国志幻想大陆2/200301",
+    "json": null,
+    "skel": "skeleton_bg.skel",
+    "atlas": "skeleton_bg.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/200600",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/200601",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton_bg",
+    "path": "三国志幻想大陆2/200601",
+    "json": null,
+    "skel": "skeleton_bg.skel",
+    "atlas": "skeleton_bg.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/200602",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton_bg",
+    "path": "三国志幻想大陆2/200602",
+    "json": null,
+    "skel": "skeleton_bg.skel",
+    "atlas": "skeleton_bg.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/201300",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/201600",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/300300",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/300400",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/300401",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton_bg",
+    "path": "三国志幻想大陆2/300401",
+    "json": null,
+    "skel": "skeleton_bg.skel",
+    "atlas": "skeleton_bg.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/300600",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/301200",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/301201",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton_bg",
+    "path": "三国志幻想大陆2/301201",
+    "json": null,
+    "skel": "skeleton_bg.skel",
+    "atlas": "skeleton_bg.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/400100",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/400200",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/400600",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/400601",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/400900",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  },
+  {
+    "name": "skeleton",
+    "path": "三国志幻想大陆2/401800",
+    "json": null,
+    "skel": "skeleton.skel",
+    "atlas": "skeleton.atlas",
+    "version": "4.1.24"
+  }
+]

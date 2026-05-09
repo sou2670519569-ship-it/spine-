@@ -1,0 +1,16 @@
+然后怎么用
+
+在仓库目录打开 CMD：
+
+node generate-manifest.js
+
+会生成：
+
+manifest.json
+然后上传
+
+把：
+
+manifest.json
+
+提交到 GitHub。
