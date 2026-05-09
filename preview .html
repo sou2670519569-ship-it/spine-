@@ -7,6 +7,26 @@
 
 <title>Universal Spine Viewer</title>
 
+<link
+rel="preload"
+as="script"
+href="https://unpkg.com/@esotericsoftware/spine-player@3.8.99/dist/iife/spine-player.js">
+
+<link
+rel="preload"
+as="script"
+href="https://unpkg.com/@esotericsoftware/spine-player@4.0.64/dist/iife/spine-player.js">
+
+<link
+rel="preload"
+as="script"
+href="https://unpkg.com/@esotericsoftware/spine-player@4.1.24/dist/iife/spine-player.js">
+
+<link
+rel="preload"
+as="script"
+href="https://unpkg.com/@esotericsoftware/spine-player@4.2.36/dist/iife/spine-player.js">
+
 <style>
 
 html,body{
@@ -171,8 +191,6 @@ const REPO = "spine-";
 
 const BRANCH = "main";
 
-/****************************************/
-
 const RAW =
 `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}`;
 
@@ -180,7 +198,7 @@ const MANIFEST =
 `${RAW}/manifest.json`;
 
 /****************************************
- * runtime CDN
+ * runtimes
  ****************************************/
 
 const RUNTIMES = {
@@ -206,6 +224,16 @@ const RUNTIMES = {
 
 /****************************************/
 
+const runtimeCache = {};
+
+let currentPlayer = null;
+
+let currentRuntime = null;
+
+let allCharacters = [];
+
+/****************************************/
+
 const listEl =
 document.getElementById("list");
 
@@ -217,14 +245,6 @@ document.getElementById("search");
 
 const animSelect =
 document.getElementById("animSelect");
-
-/****************************************/
-
-let allCharacters = [];
-
-let currentPlayer = null;
-
-let currentRuntime = null;
 
 /****************************************
  * 状态
@@ -261,13 +281,6 @@ async function init(){
         const res =
         await fetch(MANIFEST);
 
-        if(!res.ok){
-
-            throw new Error(
-                "manifest读取失败"
-            );
-        }
-
         allCharacters =
         await res.json();
 
@@ -281,7 +294,9 @@ async function init(){
 
         console.error(err);
 
-        setStatus(err.message);
+        setStatus(
+            "manifest读取失败"
+        );
     }
 }
 
@@ -331,7 +346,7 @@ function createItem(data){
     div.className = "item";
 
     div.innerText =
-    `${data.path}/${data.name}`;
+    `[${data.version}] ${data.path}/${data.name}`;
 
     div.onclick = ()=>{
 
@@ -351,121 +366,12 @@ function createItem(data){
 }
 
 /****************************************
- * 检测版本
- ****************************************/
-
-async function detectVersion(data){
-
-    try{
-
-        const encodedPath =
-        data.path
-        .split("/")
-        .map(encodeURIComponent)
-        .join("/");
-
-        const base =
-        `${RAW}/${encodedPath}`;
-
-        let url = null;
-
-        if(data.json){
-
-            url =
-            `${base}/${encodeURIComponent(data.json)}`;
-        }
-
-        else if(data.skel){
-
-            url =
-            `${base}/${encodeURIComponent(data.skel)}`;
-        }
-
-        if(!url){
-
-            return "4.2";
-        }
-
-        /********************************
-         * json
-         ********************************/
-
-        if(data.json){
-
-            const res =
-            await fetch(url);
-
-            const text =
-            await res.text();
-
-            const match =
-            text.match(
-                /"spine"\s*:\s*"([^"]+)"/
-            );
-
-            if(match){
-
-                return match[1];
-            }
-        }
-
-        /********************************
-         * skel
-         ********************************/
-
-        if(data.skel){
-
-            const res =
-            await fetch(url);
-
-            const buf =
-            await res.arrayBuffer();
-
-            const bytes =
-            new Uint8Array(buf);
-
-            let text = "";
-
-            for(let i=0;i<200;i++){
-
-                text +=
-                String.fromCharCode(
-                    bytes[i]
-                );
-            }
-
-            const match =
-            text.match(
-                /\d+\.\d+\.\d+/
-            );
-
-            if(match){
-
-                return match[0];
-            }
-        }
-
-    }catch(err){
-
-        console.error(err);
-    }
-
-    return "4.2";
-}
-
-/****************************************
- * 获取runtime
+ * runtime版本
  ****************************************/
 
 function getRuntime(version){
 
-    if(version.startsWith("3.6"))
-        return "3.6";
-
-    if(version.startsWith("3.7"))
-        return "3.7";
-
-    if(version.startsWith("3.8"))
+    if(version.startsWith("3."))
         return "3.8";
 
     if(version.startsWith("4.0"))
@@ -488,6 +394,19 @@ async function loadRuntime(version){
         if(currentRuntime === version){
 
             resolve();
+            return;
+        }
+
+        if(runtimeCache[version]){
+
+            currentRuntime =
+            version;
+
+            window.spine =
+            runtimeCache[version];
+
+            resolve();
+
             return;
         }
 
@@ -514,6 +433,9 @@ async function loadRuntime(version){
 
         script.onload = ()=>{
 
+            runtimeCache[version] =
+            window.spine;
+
             currentRuntime =
             version;
 
@@ -534,21 +456,16 @@ async function loadCharacter(data){
 
     try{
 
-        setStatus(
-            `检测版本 ${data.name}`
-        );
-
-        const fullVersion =
-        await detectVersion(data);
-
-        const runtimeVersion =
-        getRuntime(fullVersion);
+        const runtime =
+        getRuntime(data.version);
 
         setStatus(
-            `Spine ${fullVersion} → Runtime ${runtimeVersion}`
+            `Spine ${data.version}
+            
+Runtime ${runtime}`
         );
 
-        await loadRuntime(runtimeVersion);
+        await loadRuntime(runtime);
 
         if(currentPlayer){
 
@@ -585,10 +502,12 @@ async function loadCharacter(data){
                 setupAnimations(player);
 
                 setStatus(
-                    `已加载 ${data.name}
+                    `已加载
                     
-Spine ${fullVersion}
-Runtime ${runtimeVersion}`
+${data.name}
+
+Spine ${data.version}
+Runtime ${runtime}`
                 );
             },
 
@@ -604,29 +523,17 @@ ${err}`
             }
         };
 
-        /********************************
-         * atlas
-         ********************************/
-
         if(data.atlas){
 
             config.atlasUrl =
             `${base}/${encodeURIComponent(data.atlas)}`;
         }
 
-        /********************************
-         * json
-         ********************************/
-
         if(data.json){
 
             config.jsonUrl =
             `${base}/${encodeURIComponent(data.json)}`;
         }
-
-        /********************************
-         * skel
-         ********************************/
 
         if(data.skel){
 
